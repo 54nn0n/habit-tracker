@@ -2,7 +2,10 @@ import type { Metadata, Viewport } from 'next';
 import { Syne, DM_Sans } from 'next/font/google';
 import { ReactNode } from 'react';
 import './globals.css';
+import dynamic from 'next/dynamic';
 import BottomNav from '@/components/bottom-nav';
+
+const AppShell = dynamic(() => import('@/components/app-shell'));
 
 const syne = Syne({
   subsets: ['latin'],
@@ -38,7 +41,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${syne.variable} ${dmSans.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-background font-body antialiased">
-        <main className="flex-1 pb-20">{children}</main>
+        <AppShell>
+          <main className="flex-1 pb-20">{children}</main>
+        </AppShell>
         <BottomNav />
       </body>
     </html>
