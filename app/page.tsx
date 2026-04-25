@@ -5,79 +5,70 @@ import { HABITS } from '@/lib/habits';
 import type { Habit, HabitKey, Severity } from '@/lib/habits';
 import { setLog } from '@/lib/storage';
 import { useLogs } from '@/lib/use-logs';
+import { toLocalDateString, getLastNDays, formatMonthYear } from '@/lib/date-utils';
+import type { HabitDayEntry } from '@/lib/date-utils';
 import HabitCard from '@/components/habit-card';
 
-const LABEL_TODAY = 'Today';
-
-function toLocalDateString(date: Date): string {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-function formatDisplayDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  });
-}
+const DAYS_TO_SHOW = 5;
 
 interface HabitRowProps {
   habit: Habit;
-  severity: Severity;
-  onUpdate: (key: HabitKey, severity: Severity) => void;
+  days: HabitDayEntry[];
+  onUpdate: (habitKey: HabitKey, dateStr: string, severity: Severity) => void;
 }
 
-function HabitRow({ habit, severity, onUpdate }: HabitRowProps) {
+function HabitRow({ habit, days, onUpdate }: HabitRowProps) {
   const handleChange = useCallback(
-    (s: Severity) => onUpdate(habit.key, s),
+    (dateStr: string, s: Severity) => onUpdate(habit.key, dateStr, s),
     [habit.key, onUpdate],
   );
-  return <HabitCard habit={habit} severity={severity} onSeverityChange={handleChange} />;
+  return <HabitCard habit={habit} days={days} onSeverityChange={handleChange} />;
 }
 
 export default function TodayPage() {
-  const today = useMemo(() => toLocalDateString(new Date()), []);
-  const displayDate = useMemo(() => formatDisplayDate(new Date()), []);
+  const todayStr = useMemo(() => toLocalDateString(new Date()), []);
+  const monthYear = useMemo(() => formatMonthYear(new Date()), []);
+  const baseDays = useMemo(() => getLastNDays(DAYS_TO_SHOW), []);
   const allLogs = useLogs();
 
-  const severities = useMemo(() => {
-    const dayLogs = allLogs[today] ?? {};
-    return {
-      red_meat: (dayLogs.red_meat ?? 0) as Severity,
-      poultry: (dayLogs.poultry ?? 0) as Severity,
-      fish: (dayLogs.fish ?? 0) as Severity,
-      alcohol: (dayLogs.alcohol ?? 0) as Severity,
-    };
-  }, [allLogs, today]);
+  const habitRows = useMemo(
+    () =>
+      HABITS.map((habit) => ({
+        habit,
+        days: baseDays.map((day) => ({
+          ...day,
+          severity: allLogs[day.dateStr]?.[habit.key] ?? 0,
+        })),
+      })),
+    [baseDays, allLogs],
+  );
 
   const handleUpdate = useCallback(
-    (key: HabitKey, s: Severity) => setLog(today, key, s),
-    [today],
+    (key: HabitKey, dateStr: string, s: Severity) => setLog(dateStr, key, s),
+    [],
   );
 
   return (
     <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
-      <header className="mb-8">
-        <p className="text-muted text-sm font-body uppercase tracking-widest">
-          {LABEL_TODAY}
-        </p>
+      <header className="mb-6">
+        <p className="text-muted text-xs uppercase tracking-widest">{monthYear}</p>
         <h1
-          className="text-3xl font-bold text-foreground mt-1"
+          className="text-4xl font-bold text-foreground mt-0.5"
           style={{ fontFamily: 'var(--font-syne)' }}
         >
-          {displayDate}
+          {todayStr.slice(8)}
+          <span className="text-muted font-normal text-2xl ml-2">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
+          </span>
         </h1>
       </header>
 
       <div className="flex flex-col gap-3">
-        {HABITS.map((habit) => (
+        {habitRows.map(({ habit, days }) => (
           <HabitRow
             key={habit.key}
             habit={habit}
-            severity={severities[habit.key]}
+            days={days}
             onUpdate={handleUpdate}
           />
         ))}

@@ -2,11 +2,12 @@
 
 import { useMemo, useCallback } from 'react';
 import type { Habit, Severity } from '@/lib/habits';
-import { buildYearGrid, getMonthLabel, severityColor } from '@/lib/date-utils';
+import { buildYearGrid, severityColor, hexToRgba } from '@/lib/date-utils';
+import HabitHeader from '@/components/habit-header';
 
 const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-const CELL_SIZE = 11;
-const CELL_GAP = 2;
+const CELL = 12;
+const ROW_GAP = 4;
 
 interface HistoryGridProps {
   habit: Habit;
@@ -21,7 +22,7 @@ interface CellProps {
   onSelect: (date: string) => void;
 }
 
-function Cell({ date, severity, color, onSelect }: CellProps) {
+function GridCell({ date, severity, color, onSelect }: CellProps) {
   const handleClick = useCallback(() => {
     if (date) onSelect(date);
   }, [date, onSelect]);
@@ -34,12 +35,16 @@ function Cell({ date, severity, color, onSelect }: CellProps) {
       onKeyDown={date ? (e) => e.key === 'Enter' && handleClick() : undefined}
       aria-label={date ? `${date}, severity ${severity}` : undefined}
       style={{
-        width: CELL_SIZE,
-        height: CELL_SIZE,
-        backgroundColor: date ? severityColor(severity, color) : 'transparent',
-        borderRadius: 2,
-        cursor: date ? 'pointer' : 'default',
+        width: CELL,
+        height: CELL,
         flexShrink: 0,
+        backgroundColor: date
+          ? severity === 0
+            ? hexToRgba(color, 0.12)
+            : severityColor(severity, color)
+          : 'transparent',
+        borderRadius: 3,
+        cursor: date ? 'pointer' : 'default',
       }}
     />
   );
@@ -47,6 +52,7 @@ function Cell({ date, severity, color, onSelect }: CellProps) {
 
 export default function HistoryGrid({ habit, logs, onDaySelect }: HistoryGridProps) {
   const weeks = useMemo(() => buildYearGrid(), []);
+  const year = useMemo(() => String(new Date().getFullYear()), []);
 
   const handleSelect = useCallback(
     (date: string) => onDaySelect(date),
@@ -54,58 +60,39 @@ export default function HistoryGrid({ habit, logs, onDaySelect }: HistoryGridPro
   );
 
   return (
-    <div className="bg-surface rounded-2xl p-4 shadow-sm">
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-xl" role="img" aria-label={habit.label}>
-          {habit.emoji}
-        </span>
-        <span
-          className="font-bold text-base text-foreground"
-          style={{ fontFamily: 'var(--font-syne)' }}
-        >
-          {habit.label}
-        </span>
+    <div className="bg-surface rounded-2xl p-3 shadow-sm">
+      <div className="mb-3">
+        <HabitHeader habit={habit} subtitle={year} />
       </div>
 
-      <div className="overflow-x-auto">
-        <div style={{ display: 'flex', gap: CELL_GAP }}>
-          {/* Day-of-week labels column */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: CELL_GAP, paddingTop: 16 }}>
-            {DAY_LABELS.map((label, i) => (
-              <div
-                key={i}
-                style={{ width: CELL_SIZE, height: CELL_SIZE, fontSize: 8 }}
-                className="text-muted flex items-center justify-center"
-              >
-                {i % 2 === 0 ? label : ''}
-              </div>
-            ))}
-          </div>
-
-          {/* Week columns */}
-          {weeks.map((week, wi) => {
-            const monthLabel = getMonthLabel(week);
-            return (
-              <div key={wi} style={{ display: 'flex', flexDirection: 'column', gap: CELL_GAP }}>
-                <div
-                  style={{ height: 14, fontSize: 9, whiteSpace: 'nowrap' }}
-                  className="text-muted flex items-center"
-                >
-                  {monthLabel ?? ''}
-                </div>
-                {week.map((date, di) => (
-                  <Cell
-                    key={di}
-                    date={date}
-                    severity={date ? (logs[date] ?? 0) : 0}
-                    color={habit.color}
-                    onSelect={handleSelect}
-                  />
-                ))}
-              </div>
-            );
-          })}
+      {/* Day-of-week header */}
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: ROW_GAP }}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
+          {DAY_LABELS.map((label, i) => (
+            <div key={i} style={{ width: CELL, fontSize: 7 }} className="text-muted text-center">
+              {label}
+            </div>
+          ))}
         </div>
+      </div>
+
+      {/* Week rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: ROW_GAP }}>
+        {weeks.map((week, wi) => (
+          <div key={wi} style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              {week.map((date, di) => (
+                <GridCell
+                  key={di}
+                  date={date}
+                  severity={date ? (logs[date] ?? 0) : 0}
+                  color={habit.color}
+                  onSelect={handleSelect}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

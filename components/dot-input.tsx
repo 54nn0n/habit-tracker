@@ -1,50 +1,62 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import type { CSSProperties } from 'react';
 import type { Severity } from '@/lib/habits';
 import { SEVERITY_CYCLE } from '@/lib/habits';
+import { hexToRgba } from '@/lib/date-utils';
 
-const DOTS = [1, 2, 3] as const;
-const ARIA_LABEL = (s: Severity) => `Severity ${s} of 3, tap to change`;
+const SEVERITY_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.38, 2: 0.68, 3: 1 };
+
+function circleStyle(severity: Severity, color: string): CSSProperties {
+  if (severity === 0) {
+    return { border: `2px solid ${hexToRgba(color, 0.3)}` };
+  }
+  return { backgroundColor: hexToRgba(color, SEVERITY_ALPHAS[severity]) };
+}
 
 interface DotInputProps {
   severity: Severity;
   color: string;
+  dayLabel: string;
+  dayNumber: number;
+  isToday: boolean;
   onChange: (severity: Severity) => void;
 }
 
-export default function DotInput({ severity, color, onChange }: DotInputProps) {
-  const [animating, setAnimating] = useState(false);
-
-  const handleTap = useCallback(() => {
-    onChange(SEVERITY_CYCLE[severity]);
-    setAnimating(true);
-    setTimeout(() => setAnimating(false), 150);
-  }, [severity, onChange]);
+export default function DotInput({
+  severity,
+  color,
+  dayLabel,
+  dayNumber,
+  isToday,
+  onChange,
+}: DotInputProps) {
+  const handleTap = useCallback(
+    () => onChange(SEVERITY_CYCLE[severity]),
+    [severity, onChange],
+  );
 
   return (
     <button
       type="button"
       onClick={handleTap}
-      aria-label={ARIA_LABEL(severity)}
-      className="flex items-center gap-2.5 min-w-[44px] min-h-[44px] px-2 py-1"
+      aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of 3`}
+      className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
-      {DOTS.map((dot) => {
-        const filled = dot <= severity;
-        return (
-          <span
-            key={dot}
-            className={`block w-5 h-5 rounded-full transition-all duration-150 ${
-              filled && animating ? 'dot-pop' : ''
-            }`}
-            style={
-              filled
-                ? { backgroundColor: color, transform: 'scale(1.1)' }
-                : { border: `2px solid ${color}`, opacity: 0.4 }
-            }
-          />
-        );
-      })}
+      <span className={`text-[10px] font-medium ${isToday ? 'text-foreground' : 'text-muted'}`}>
+        {dayLabel}
+      </span>
+      <span
+        className={`text-xs leading-none ${isToday ? 'font-bold text-foreground' : 'text-muted'}`}
+        style={{ fontFamily: 'var(--font-syne)' }}
+      >
+        {dayNumber}
+      </span>
+      <span
+        className="w-9 h-9 rounded-full transition-all duration-150 flex-shrink-0"
+        style={circleStyle(severity, color)}
+      />
     </button>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
+import type { MouseEvent } from 'react';
 import { HABITS } from '@/lib/habits';
 import type { Severity } from '@/lib/habits';
 import { formatDayDetail } from '@/lib/date-utils';
@@ -23,7 +24,7 @@ interface DayDetailProps {
 
 export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
   const handleBackdropClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+    (e: MouseEvent<HTMLDivElement>) => {
       if (e.target === e.currentTarget) onClose();
     },
     [onClose],
@@ -59,7 +60,7 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
         ) : (
           <div className="flex flex-col gap-4">
             {HABITS.map((habit) => {
-              const severity = (logs[habit.key] ?? 0) as Severity;
+              const severity = logs[habit.key] ?? 0;
               if (severity === 0) return null;
               return (
                 <div key={habit.key} className="flex items-center justify-between">
