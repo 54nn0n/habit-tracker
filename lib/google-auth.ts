@@ -63,7 +63,11 @@ export async function exchangeCode(code: string): Promise<void> {
     }),
   });
 
-  if (!res.ok) throw new Error(`Token exchange failed: ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text();
+    console.error('Token exchange failed', res.status, body);
+    throw new Error(`Token exchange failed: ${res.status} ${body}`);
+  }
   const data = await res.json();
   storeTokens(data);
   sessionStorage.removeItem(VERIFIER_KEY);
