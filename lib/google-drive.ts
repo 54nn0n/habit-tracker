@@ -2,7 +2,7 @@ import { getValidToken } from './google-auth';
 
 const FILES_API = 'https://www.googleapis.com/drive/v3/files';
 const UPLOAD_API = 'https://www.googleapis.com/upload/drive/v3/files';
-const FILE_NAME = 'habit-log.md';
+const FILE_NAME = '93_Habits_Log.md';
 const FILE_ID_KEY = 'gd_file_id';
 
 async function headers(): Promise<Record<string, string>> {

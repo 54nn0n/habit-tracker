@@ -1,5 +1,5 @@
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '';
-const SCOPE = 'https://www.googleapis.com/auth/drive.file';
+const SCOPE = 'https://www.googleapis.com/auth/drive.file email';
 const VERIFIER_KEY = 'gd_pkce_verifier';
 
 const KEYS = {
