@@ -52,9 +52,24 @@ export function getLog(date: string, habit: HabitKey): Severity {
   return readAll()[date]?.[habit] ?? 0;
 }
 
+export function getAllLogs(): AllLogs {
+  return readAll();
+}
+
+export function setAllLogs(logs: AllLogs): void {
+  writeAll(logs);
+  notify();
+}
+
+let onWriteCallback: (() => void) | null = null;
+export function setWriteCallback(fn: () => void): void {
+  onWriteCallback = fn;
+}
+
 export function setLog(date: string, habit: HabitKey, severity: Severity): void {
   const logs = readAll();
   logs[date] = { ...logs[date], [habit]: severity };
   writeAll(logs);
   notify();
+  onWriteCallback?.();
 }
