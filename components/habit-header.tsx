@@ -13,8 +13,8 @@ export default function HabitHeader({ habit, subtitle }: HabitHeaderProps) {
         style={{
           width: 34,
           height: 34,
-          borderRadius: 10,
-          backgroundColor: hexToRgba(habit.color, 0.15),
+          backgroundColor: hexToRgba(habit.color, 0.12),
+          border: `2px solid ${habit.color}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -27,12 +27,12 @@ export default function HabitHeader({ habit, subtitle }: HabitHeaderProps) {
       </div>
       <div>
         <p
-          className="font-bold leading-tight"
-          style={{ fontFamily: 'var(--font-syne)', color: habit.color, fontSize: 13 }}
+          className="leading-tight"
+          style={{ fontFamily: 'var(--font-syne)', color: habit.color, fontSize: 9 }}
         >
           {habit.label}
         </p>
-        <p className="text-muted leading-tight" style={{ fontSize: 11 }}>
+        <p style={{ fontFamily: 'var(--font-dm-sans)', color: 'var(--color-muted)', fontSize: 10 }}>
           {subtitle}
         </p>
       </div>

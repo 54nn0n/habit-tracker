@@ -6,9 +6,6 @@ import { HABITS } from '@/lib/habits';
 import type { Severity } from '@/lib/habits';
 import { formatDayDetail } from '@/lib/date-utils';
 
-const LABEL_CLOSE = 'Close';
-const LABEL_NO_DATA = 'Nothing logged';
-
 const SEVERITY_LABELS: Record<Severity, string> = {
   0: 'None',
   1: 'Light',
@@ -34,29 +31,42 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 z-50 flex items-end"
+      className="fixed inset-0 z-50 flex items-end"
+      style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
       onClick={handleBackdropClick}
     >
-      <div className="bg-surface w-full rounded-t-3xl p-6 pb-10 max-w-lg mx-auto">
+      <div
+        className="w-full p-6 pb-10 max-w-lg mx-auto"
+        style={{
+          backgroundColor: 'var(--color-surface)',
+          borderTop: '2px solid var(--color-accent)',
+          boxShadow: '0 -4px 0 var(--color-cyan-dim)',
+        }}
+      >
         <div className="flex items-center justify-between mb-5">
-          <h2
-            className="text-base font-bold text-foreground"
-            style={{ fontFamily: 'var(--font-syne)' }}
-          >
+          <h2 style={{ fontFamily: 'var(--font-syne)', fontSize: 10, color: 'var(--color-accent)' }}>
             {formatDayDetail(dateStr)}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            aria-label={LABEL_CLOSE}
-            className="text-muted text-sm font-medium"
+            aria-label="Close"
+            style={{
+              fontFamily: 'var(--font-dm-sans)',
+              fontSize: 10,
+              color: 'var(--color-muted)',
+              border: '1px solid var(--color-border)',
+              padding: '4px 10px',
+            }}
           >
-            {LABEL_CLOSE}
+            CLOSE
           </button>
         </div>
 
         {allZero ? (
-          <p className="text-muted text-sm">{LABEL_NO_DATA}</p>
+          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 11, color: 'var(--color-muted)' }}>
+            Nothing logged
+          </p>
         ) : (
           <div className="flex flex-col gap-4">
             {HABITS.map((habit) => {
@@ -68,13 +78,19 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
                     <span className="text-xl" role="img" aria-label={habit.label}>
                       {habit.emoji}
                     </span>
-                    <span className="text-sm font-medium text-foreground">
+                    <span style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 11, color: 'var(--color-foreground)' }}>
                       {habit.label}
                     </span>
                   </div>
                   <span
-                    className="text-xs font-bold px-2 py-0.5 rounded-full text-surface"
-                    style={{ backgroundColor: habit.color }}
+                    style={{
+                      fontFamily: 'var(--font-syne)',
+                      fontSize: 8,
+                      padding: '4px 8px',
+                      backgroundColor: habit.color,
+                      color: '#0a0a0f',
+                      border: `1px solid ${habit.color}`,
+                    }}
                   >
                     {SEVERITY_LABELS[severity]}
                   </span>

@@ -39,9 +39,11 @@ function MonthView({ grid, logs, color, todayStr, onDaySelect }: MonthViewProps)
   return (
     <div>
       <p
-        className="font-bold leading-none mb-1.5"
         style={{
-          fontSize: 11,
+          fontFamily: 'var(--font-dm-sans)',
+          fontSize: 9,
+          fontWeight: 700,
+          marginBottom: 6,
           color: isFutureMonth ? 'var(--color-muted)' : 'var(--color-foreground)',
         }}
       >
@@ -67,11 +69,10 @@ function MonthView({ grid, logs, color, todayStr, onDaySelect }: MonthViewProps)
                 aria-label={dateStr}
                 style={{
                   aspectRatio: '1',
-                  borderRadius: 3,
                   backgroundColor: !isFuture && severity > 0
                     ? severityColor(severity, color)
                     : 'transparent',
-                  outline: isToday ? `1.5px solid ${color}` : undefined,
+                  outline: isToday ? `2px solid var(--color-yellow)` : undefined,
                   outlineOffset: -1,
                   display: 'flex',
                   alignItems: 'center',
@@ -81,13 +82,14 @@ function MonthView({ grid, logs, color, todayStr, onDaySelect }: MonthViewProps)
               >
                 <span
                   style={{
-                    fontSize: 8,
+                    fontFamily: 'var(--font-dm-sans)',
+                    fontSize: 7,
                     lineHeight: 1,
                     fontWeight: isToday ? 700 : 400,
                     color: isFuture
-                      ? hexToRgba('#6B6B6B', 0.4)
+                      ? hexToRgba('#9999bb', 0.4)
                       : severity === 3
-                        ? '#ffffff'
+                        ? '#0a0a0f'
                         : 'var(--color-foreground)',
                   }}
                 >
@@ -114,15 +116,22 @@ export default function YearCalendar({ habit, logs, onDaySelect }: YearCalendarP
   );
 
   return (
-    <div className="bg-surface rounded-2xl p-4 shadow-sm">
+    <div
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        border: '2px solid var(--color-border)',
+        boxShadow: 'var(--px-shadow) var(--color-border)',
+        padding: '16px',
+      }}
+    >
       <div className="flex items-start justify-between mb-4">
         <HabitHeader habit={habit} subtitle={String(year)} />
         <div className="text-right shrink-0 ml-2">
-          <p className="text-xs font-medium text-foreground leading-snug">
-            {stats.loggedDays} of {stats.totalDays} days · {stats.percentage}%
+          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-foreground)' }}>
+            {stats.loggedDays}/{stats.totalDays} · {stats.percentage}%
           </p>
-          <p className="text-xs text-muted leading-snug">
-            {stats.longestStreak} day{stats.longestStreak !== 1 ? 's' : ''}: longest streak
+          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-muted)' }}>
+            {stats.longestStreak}d streak
           </p>
         </div>
       </div>

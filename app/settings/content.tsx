@@ -11,10 +11,65 @@ import { getAllLogs, setAllLogs } from '@/lib/storage';
 const VERSION = '0.2.0';
 
 const STATUS_LABEL: Record<SyncStatus, string> = {
-  idle: 'Not synced yet',
-  syncing: 'Syncing…',
-  synced: 'Synced',
-  error: 'Sync failed',
+  idle: 'NOT SYNCED YET',
+  syncing: 'SYNCING...',
+  synced: 'SYNCED',
+  error: 'SYNC FAILED',
+};
+
+const STATUS_COLOR: Record<SyncStatus, string> = {
+  idle: 'var(--color-muted)',
+  syncing: 'var(--color-yellow)',
+  synced: 'var(--color-green)',
+  error: 'var(--color-red)',
+};
+
+const sectionLabel: React.CSSProperties = {
+  fontFamily: 'var(--font-syne)',
+  fontSize: 8,
+  color: 'var(--color-accent)',
+  letterSpacing: 2,
+  textTransform: 'uppercase' as const,
+  marginBottom: 8,
+};
+
+const panel: React.CSSProperties = {
+  backgroundColor: 'var(--color-surface)',
+  border: '2px solid var(--color-border)',
+  boxShadow: 'var(--px-shadow) var(--color-border)',
+  padding: '16px',
+  display: 'flex',
+  flexDirection: 'column' as const,
+  gap: 12,
+};
+
+const btnGhost: React.CSSProperties = {
+  fontFamily: 'var(--font-dm-sans)',
+  fontSize: 10,
+  color: 'var(--color-accent)',
+  border: '2px solid var(--color-accent)',
+  boxShadow: '4px 4px 0 var(--color-cyan-dim)',
+  padding: '8px 14px',
+  background: 'transparent',
+  cursor: 'pointer',
+  letterSpacing: 0.5,
+};
+
+const btnBlock: React.CSSProperties = {
+  ...btnGhost,
+  width: '100%',
+  padding: '12px',
+  textAlign: 'center' as const,
+};
+
+const btnMuted: React.CSSProperties = {
+  fontFamily: 'var(--font-dm-sans)',
+  fontSize: 10,
+  color: 'var(--color-muted)',
+  border: '1px solid var(--color-border)',
+  padding: '6px 12px',
+  background: 'transparent',
+  cursor: 'pointer',
 };
 
 function SettingsInner() {
@@ -47,7 +102,7 @@ function SettingsInner() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'habit-log.md';
+    a.download = '93_Habits_Log.md';
     a.click();
     URL.revokeObjectURL(url);
   }, []);
@@ -62,7 +117,7 @@ function SettingsInner() {
         setImportError(null);
         syncNow();
       } catch {
-        setImportError("Could not parse file. Make sure it's a valid habit-log.md.");
+        setImportError('Could not parse file.');
       }
     };
     reader.readAsText(file);
@@ -73,77 +128,97 @@ function SettingsInner() {
   return (
     <div className="px-4 pt-10 pb-20 max-w-lg mx-auto w-full">
       <header className="mb-8">
-        <p className="text-muted text-xs uppercase tracking-widest">App</p>
-        <h1 className="text-3xl font-bold text-foreground mt-0.5" style={{ fontFamily: 'var(--font-syne)' }}>
-          Settings
+        <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-muted)', letterSpacing: 3, textTransform: 'uppercase' }}>
+          App
+        </p>
+        <h1 className="mt-2 leading-tight" style={{ fontFamily: 'var(--font-syne)', fontSize: 22, color: 'var(--color-accent)' }}>
+          SETTINGS
         </h1>
       </header>
 
       <section className="mb-8">
-        <p className="font-bold uppercase tracking-widest text-muted mb-3" style={{ fontSize: 10 }}>Google Drive</p>
-        <div className="bg-surface rounded-2xl p-4 shadow-sm flex flex-col gap-4">
+        <p style={sectionLabel}>// Google Drive</p>
+        <div style={panel}>
           {authError && (
-            <p className="text-xs" style={{ color: '#E8412A' }}>Connection failed. Please try again.</p>
+            <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 10, color: 'var(--color-red)' }}>
+              ✕ Connection failed. Please try again.
+            </p>
           )}
           {connected ? (
             <>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-foreground">Connected</p>
-                  <p className="text-xs text-muted">{email}</p>
+                  <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 11, color: 'var(--color-green)' }}>
+                    ▶ CONNECTED
+                  </p>
+                  <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-muted)', marginTop: 2 }}>
+                    {email}
+                  </p>
                 </div>
-                <button type="button" onClick={handleDisconnect}
-                  className="text-xs text-muted font-medium px-3 py-1.5 rounded-lg bg-background">
-                  Disconnect
+                <button type="button" onClick={handleDisconnect} style={btnMuted}>
+                  DISCONNECT
                 </button>
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-foreground">{STATUS_LABEL[syncStatus]}</p>
+                  <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 10, color: STATUS_COLOR[syncStatus] }}>
+                    {STATUS_LABEL[syncStatus]}
+                  </p>
                   {lastSynced && (
-                    <p className="text-xs text-muted">
+                    <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-muted)', marginTop: 2 }}>
                       {lastSynced.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   )}
                 </div>
-                <button type="button" onClick={syncNow} disabled={syncStatus === 'syncing'}
-                  className="text-xs font-medium px-3 py-1.5 rounded-lg bg-background text-foreground disabled:opacity-40">
-                  Sync now
+                <button type="button" onClick={syncNow} disabled={syncStatus === 'syncing'} style={{ ...btnMuted, opacity: syncStatus === 'syncing' ? 0.4 : 1 }}>
+                  SYNC NOW
                 </button>
               </div>
             </>
           ) : (
-            <button type="button" onClick={handleConnect}
-              className="w-full py-3 rounded-xl text-sm font-bold text-surface"
-              style={{ backgroundColor: 'var(--color-foreground)' }}>
-              Connect Google Drive
+            <button type="button" onClick={handleConnect} style={{
+              ...btnBlock,
+              backgroundColor: 'var(--color-accent)',
+              color: '#0a0a0f',
+              border: '2px solid var(--color-accent)',
+              boxShadow: '4px 4px 0 var(--color-cyan-dim)',
+              fontFamily: 'var(--font-syne)',
+              fontSize: 9,
+            }}>
+              CONNECT GOOGLE DRIVE
             </button>
           )}
         </div>
       </section>
 
       <section className="mb-8">
-        <p className="font-bold uppercase tracking-widest text-muted mb-3" style={{ fontSize: 10 }}>Data</p>
-        <div className="bg-surface rounded-2xl p-4 shadow-sm flex flex-col gap-3">
-          <button type="button" onClick={handleExport}
-            className="w-full py-3 rounded-xl text-sm font-medium text-foreground bg-background">
-            Export habit-log.md
+        <p style={sectionLabel}>// Data</p>
+        <div style={panel}>
+          <button type="button" onClick={handleExport} style={btnBlock}>
+            EXPORT 93_HABITS_LOG.MD
           </button>
-          <button type="button" onClick={() => fileInputRef.current?.click()}
-            className="w-full py-3 rounded-xl text-sm font-medium text-foreground bg-background">
-            Import habit-log.md
+          <button type="button" onClick={() => fileInputRef.current?.click()} style={btnBlock}>
+            IMPORT 93_HABITS_LOG.MD
           </button>
           <input ref={fileInputRef} type="file" accept=".md,text/markdown"
             className="hidden" onChange={handleImport} />
-          {importError && <p className="text-xs" style={{ color: '#E8412A' }}>{importError}</p>}
+          {importError && (
+            <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 10, color: 'var(--color-red)' }}>
+              ✕ {importError}
+            </p>
+          )}
         </div>
       </section>
 
       <section>
-        <p className="font-bold uppercase tracking-widest text-muted mb-3" style={{ fontSize: 10 }}>About</p>
-        <div className="bg-surface rounded-2xl p-4 shadow-sm">
-          <p className="text-sm text-foreground font-medium">Habits</p>
-          <p className="text-xs text-muted mt-0.5">Version {VERSION}</p>
+        <p style={sectionLabel}>// About</p>
+        <div style={{ ...panel, gap: 4 }}>
+          <p style={{ fontFamily: 'var(--font-syne)', fontSize: 9, color: 'var(--color-foreground)' }}>
+            93 HABITS
+          </p>
+          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 10, color: 'var(--color-muted)' }}>
+            v{VERSION}
+          </p>
         </div>
       </section>
     </div>

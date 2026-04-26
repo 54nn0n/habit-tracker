@@ -6,13 +6,17 @@ import type { Severity } from '@/lib/habits';
 import { SEVERITY_CYCLE } from '@/lib/habits';
 import { hexToRgba } from '@/lib/date-utils';
 
-const SEVERITY_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.38, 2: 0.68, 3: 1 };
+const SEVERITY_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.35, 2: 0.65, 3: 1 };
 
-function circleStyle(severity: Severity, color: string): CSSProperties {
+function squareStyle(severity: Severity, color: string): CSSProperties {
   if (severity === 0) {
-    return { border: `2px solid ${hexToRgba(color, 0.3)}` };
+    return { border: `2px solid ${hexToRgba(color, 0.35)}` };
   }
-  return { backgroundColor: hexToRgba(color, SEVERITY_ALPHAS[severity]) };
+  return {
+    backgroundColor: hexToRgba(color, SEVERITY_ALPHAS[severity]),
+    border: `2px solid ${color}`,
+    boxShadow: severity === 3 ? `0 0 6px ${hexToRgba(color, 0.7)}` : undefined,
+  };
 }
 
 interface DotInputProps {
@@ -44,18 +48,28 @@ export default function DotInput({
       aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of 3`}
       className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
-      <span className={`text-[10px] font-medium ${isToday ? 'text-foreground' : 'text-muted'}`}>
+      <span
+        className="text-[9px]"
+        style={{
+          fontFamily: 'var(--font-dm-sans)',
+          color: isToday ? 'var(--color-accent)' : 'var(--color-muted)',
+        }}
+      >
         {dayLabel}
       </span>
       <span
-        className={`text-xs leading-none ${isToday ? 'font-bold text-foreground' : 'text-muted'}`}
-        style={{ fontFamily: 'var(--font-syne)' }}
+        className="text-[9px] leading-none"
+        style={{
+          fontFamily: 'var(--font-dm-sans)',
+          fontWeight: isToday ? 700 : 400,
+          color: isToday ? 'var(--color-foreground)' : 'var(--color-muted)',
+        }}
       >
         {dayNumber}
       </span>
       <span
-        className="w-9 h-9 rounded-full transition-all duration-150 flex-shrink-0"
-        style={circleStyle(severity, color)}
+        className="w-8 h-8 flex-shrink-0 transition-all duration-150"
+        style={squareStyle(severity, color)}
       />
     </button>
   );
