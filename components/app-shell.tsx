@@ -1,29 +1,11 @@
 'use client';
 
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useSync } from '@/lib/use-sync';
 
 interface AppShellProps {
   children: ReactNode;
-}
-
-function GearIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  );
 }
 
 function SyncMount() {
@@ -32,16 +14,32 @@ function SyncMount() {
 }
 
 export default function AppShell({ children }: AppShellProps) {
+  const [offline, setOffline] = useState(() =>
+    typeof navigator !== 'undefined' ? !navigator.onLine : false,
+  );
+
+  useEffect(() => {
+    const on = () => setOffline(false);
+    const off = () => setOffline(true);
+    window.addEventListener('online', on);
+    window.addEventListener('offline', off);
+    return () => {
+      window.removeEventListener('online', on);
+      window.removeEventListener('offline', off);
+    };
+  }, []);
+
   return (
     <>
       <SyncMount />
-      <Link
-        href="/settings"
-        aria-label="Settings"
-        className="fixed top-4 right-4 z-40 w-10 h-10 flex items-center justify-center text-muted rounded-full hover:text-foreground transition-colors"
-      >
-        <GearIcon />
-      </Link>
+      {offline && (
+        <div
+          className="sticky top-0 z-50 w-full flex items-center justify-center py-2 px-4 text-xs font-medium"
+          style={{ backgroundColor: 'var(--color-foreground)', color: 'var(--color-background)' }}
+        >
+          No internet connection — changes saved locally
+        </div>
+      )}
       {children}
     </>
   );
