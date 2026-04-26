@@ -43,7 +43,6 @@ function GridCell({ date, severity, color, onSelect }: CellProps) {
             ? hexToRgba(color, 0.12)
             : severityColor(severity, color)
           : 'transparent',
-        borderRadius: 3,
         cursor: date ? 'pointer' : 'default',
       }}
     />
@@ -60,23 +59,28 @@ export default function HistoryGrid({ habit, logs, onDaySelect }: HistoryGridPro
   );
 
   return (
-    <div className="bg-surface rounded-2xl p-3 shadow-sm">
+    <div
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        border: '2px solid var(--color-border)',
+        boxShadow: 'var(--px-shadow) var(--color-border)',
+        padding: '12px',
+      }}
+    >
       <div className="mb-3">
         <HabitHeader habit={habit} subtitle={year} />
       </div>
 
-      {/* Day-of-week header */}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: ROW_GAP }}>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
           {DAY_LABELS.map((label, i) => (
-            <div key={i} style={{ width: CELL, fontSize: 7 }} className="text-muted text-center">
+            <div key={i} style={{ width: CELL, fontSize: 7, fontFamily: 'var(--font-dm-sans)', color: 'var(--color-muted)', textAlign: 'center' }}>
               {label}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Week rows */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: ROW_GAP }}>
         {weeks.map((week, wi) => (
           <div key={wi} style={{ display: 'flex', alignItems: 'center' }}>
