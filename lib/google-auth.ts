@@ -1,6 +1,5 @@
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '';
 const SCOPE = 'https://www.googleapis.com/auth/drive.file';
-const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const VERIFIER_KEY = 'gd_pkce_verifier';
 
 const KEYS = {
@@ -51,12 +50,11 @@ export async function exchangeCode(code: string): Promise<void> {
   const verifier = sessionStorage.getItem(VERIFIER_KEY);
   if (!verifier) throw new Error('PKCE verifier missing');
 
-  const res = await fetch(TOKEN_URL, {
+  const res = await fetch('/api/auth/token', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
       code,
-      client_id: CLIENT_ID,
       redirect_uri: redirectUri(),
       grant_type: 'authorization_code',
       code_verifier: verifier,
@@ -66,7 +64,7 @@ export async function exchangeCode(code: string): Promise<void> {
   if (!res.ok) {
     const body = await res.text();
     console.error('Token exchange failed', res.status, body);
-    throw new Error(`Token exchange failed: ${res.status} ${body}`);
+    throw new Error(`Token exchange failed: ${res.status}`);
   }
   const data = await res.json();
   storeTokens(data);
@@ -103,11 +101,10 @@ async function refreshToken(): Promise<string | null> {
   const refresh = localStorage.getItem(KEYS.refreshToken);
   if (!refresh) { disconnect(); return null; }
 
-  const res = await fetch(TOKEN_URL, {
+  const res = await fetch('/api/auth/token', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      client_id: CLIENT_ID,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
       grant_type: 'refresh_token',
       refresh_token: refresh,
     }),
