@@ -1,24 +1,30 @@
 {
-  "name": "Habit Tracker",
+  "name": "93 Habits",
   "short_name": "Habits",
   "description": "Track your daily consumption habits",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFFBF5",
-  "theme_color": "#FFFBF5",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
   "orientation": "portrait",
   "icons": [
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }
