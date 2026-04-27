@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { HABITS } from '@/lib/habits';
-import type { AllLogs } from '@/lib/storage';
-import { toLocalDateString, hexToRgba, severityColor } from '@/lib/date-utils';
+import { useMemo } from "react";
+import { HABITS } from "@/lib/habits";
+import type { AllLogs } from "@/lib/storage";
+import { toLocalDateString, hexToRgba, severityColor } from "@/lib/date-utils";
 
 interface Last30DaysProps {
   allLogs: AllLogs;
@@ -21,18 +21,17 @@ export default function Last30Days({ allLogs }: Last30DaysProps) {
   }, []);
 
   return (
-    <div className="bg-surface rounded-2xl p-4 shadow-sm">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-3">
-        Last 30 Days
+    <div className="bg-surface border-2 border-border p-4 shadow-px">
+      <p className="font-display text-[8px] text-accent tracking-[2px] mb-3">
+        LAST 30 DAYS
       </p>
       <div className="flex flex-col gap-2.5">
         {HABITS.map((habit) => (
           <div key={habit.key} className="flex items-center gap-2">
             <span
-              className="text-base leading-none shrink-0"
+              className="text-base leading-none shrink-0 w-5"
               role="img"
               aria-label={habit.label}
-              style={{ width: 20 }}
             >
               {habit.emoji}
             </span>
@@ -45,10 +44,10 @@ export default function Last30Days({ allLogs }: Last30DaysProps) {
                     style={{
                       width: 7,
                       height: 7,
-                      borderRadius: 2,
-                      backgroundColor: severity > 0
-                        ? severityColor(severity, habit.color)
-                        : hexToRgba(habit.color, 0.1),
+                      backgroundColor:
+                        severity > 0
+                          ? severityColor(severity, habit.color)
+                          : hexToRgba(habit.color, 0.1),
                     }}
                   />
                 );

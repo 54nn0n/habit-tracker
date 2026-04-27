@@ -1,20 +1,30 @@
-'use client';
+"use client";
 
-import { useMemo, useCallback } from 'react';
-import type { Habit, Severity } from '@/lib/habits';
+import { useMemo, useCallback } from "react";
+import type { Habit, Severity } from "@/lib/habits";
 import {
   buildCalendarYear,
   computeYearStats,
   toLocalDateString,
   hexToRgba,
   severityColor,
-} from '@/lib/date-utils';
-import type { MonthGrid } from '@/lib/date-utils';
-import HabitHeader from '@/components/habit-header';
+} from "@/lib/date-utils";
+import type { MonthGrid } from "@/lib/date-utils";
+import HabitHeader from "@/components/habit-header";
 
 const MONTH_NAMES = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ];
 
 interface YearCalendarProps {
@@ -31,29 +41,37 @@ interface MonthViewProps {
   onDaySelect: (dateStr: string) => void;
 }
 
-function MonthView({ grid, logs, color, todayStr, onDaySelect }: MonthViewProps) {
+function MonthView({
+  grid,
+  logs,
+  color,
+  todayStr,
+  onDaySelect,
+}: MonthViewProps) {
   const { year, month, weeks } = grid;
-  const monthStr = `${year}-${String(month).padStart(2, '0')}`;
+  const monthStr = `${year}-${String(month).padStart(2, "0")}`;
   const isFutureMonth = monthStr > todayStr.slice(0, 7);
 
   return (
     <div>
       <p
-        className="font-bold leading-none mb-1.5"
-        style={{
-          fontSize: 11,
-          color: isFutureMonth ? 'var(--color-muted)' : 'var(--color-foreground)',
-        }}
+        className={`font-body text-[9px] font-bold mb-1.5 ${isFutureMonth ? "text-muted" : "text-foreground"}`}
       >
         {MONTH_NAMES[month - 1]}
       </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, 1fr)",
+          gap: 2,
+        }}
+      >
         {weeks.map((week, wi) =>
           week.map((day, di) => {
             if (!day) {
-              return <div key={`${wi}-${di}`} style={{ aspectRatio: '1' }} />;
+              return <div key={`${wi}-${di}`} style={{ aspectRatio: "1" }} />;
             }
-            const dateStr = `${monthStr}-${String(day).padStart(2, '0')}`;
+            const dateStr = `${monthStr}-${String(day).padStart(2, "0")}`;
             const isFuture = dateStr > todayStr;
             const isToday = dateStr === todayStr;
             const severity = logs[dateStr] ?? 0;
@@ -66,43 +84,47 @@ function MonthView({ grid, logs, color, todayStr, onDaySelect }: MonthViewProps)
                 disabled={isFuture}
                 aria-label={dateStr}
                 style={{
-                  aspectRatio: '1',
-                  borderRadius: 3,
-                  backgroundColor: !isFuture && severity > 0
-                    ? severityColor(severity, color)
-                    : 'transparent',
-                  outline: isToday ? `1.5px solid ${color}` : undefined,
+                  aspectRatio: "1",
+                  backgroundColor:
+                    !isFuture && severity > 0
+                      ? severityColor(severity, color)
+                      : "transparent",
+                  outline: isToday
+                    ? `2px solid var(--color-yellow)`
+                    : undefined,
                   outlineOffset: -1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: isFuture ? 'default' : 'pointer',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: isFuture ? "default" : "pointer",
                 }}
               >
                 <span
+                  className={`font-body text-[7px] leading-none ${isToday ? "font-bold" : ""}`}
                   style={{
-                    fontSize: 8,
-                    lineHeight: 1,
-                    fontWeight: isToday ? 700 : 400,
                     color: isFuture
-                      ? hexToRgba('#6B6B6B', 0.4)
+                      ? hexToRgba("#9999bb", 0.4)
                       : severity === 3
-                        ? '#ffffff'
-                        : 'var(--color-foreground)',
+                        ? "#0a0a0f"
+                        : "var(--color-foreground)",
                   }}
                 >
                   {day}
                 </span>
               </button>
             );
-          })
+          }),
         )}
       </div>
     </div>
   );
 }
 
-export default function YearCalendar({ habit, logs, onDaySelect }: YearCalendarProps) {
+export default function YearCalendar({
+  habit,
+  logs,
+  onDaySelect,
+}: YearCalendarProps) {
   const year = useMemo(() => new Date().getFullYear(), []);
   const todayStr = useMemo(() => toLocalDateString(new Date()), []);
   const months = useMemo(() => buildCalendarYear(year), [year]);
@@ -114,20 +136,26 @@ export default function YearCalendar({ habit, logs, onDaySelect }: YearCalendarP
   );
 
   return (
-    <div className="bg-surface rounded-2xl p-4 shadow-sm">
+    <div className="bg-surface border-2 border-border p-4 shadow-px">
       <div className="flex items-start justify-between mb-4">
         <HabitHeader habit={habit} subtitle={String(year)} />
         <div className="text-right shrink-0 ml-2">
-          <p className="text-xs font-medium text-foreground leading-snug">
-            {stats.loggedDays} of {stats.totalDays} days · {stats.percentage}%
+          <p className="font-body text-[9px] text-foreground">
+            {stats.loggedDays}/{stats.totalDays} · {stats.percentage}%
           </p>
-          <p className="text-xs text-muted leading-snug">
-            {stats.longestStreak} day{stats.longestStreak !== 1 ? 's' : ''}: longest streak
+          <p className="font-body text-[9px] text-muted">
+            {stats.longestStreak}d streak
           </p>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 16,
+        }}
+      >
         {months.map((grid) => (
           <MonthView
             key={grid.month}

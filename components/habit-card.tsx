@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import type { Habit, Severity } from '@/lib/habits';
-import type { HabitDayEntry } from '@/lib/date-utils';
-import { hexToRgba } from '@/lib/date-utils';
-import DotInput from './dot-input';
+import { useCallback } from "react";
+import type { Habit, Severity } from "@/lib/habits";
+import type { HabitDayEntry } from "@/lib/date-utils";
+import { hexToRgba } from "@/lib/date-utils";
+import DotInput from "./dot-input";
 
 interface HabitCardProps {
   habit: Habit;
@@ -35,19 +35,30 @@ function DayColumn({ day, color, onSeverityChange }: DayColumnProps) {
   );
 }
 
-export default function HabitCard({ habit, days, onSeverityChange }: HabitCardProps) {
+export default function HabitCard({
+  habit,
+  days,
+  onSeverityChange,
+}: HabitCardProps) {
   return (
     <div
-      className="rounded-2xl overflow-hidden shadow-sm"
-      style={{ backgroundColor: hexToRgba(habit.color, 0.06) }}
+      className="bg-surface"
+      style={{
+        border: `2px solid ${habit.color}`,
+        boxShadow: `var(--px-shadow) ${hexToRgba(habit.color, 0.5)}`,
+      }}
     >
       <div className="px-5 pt-4 pb-1 flex items-center gap-2">
-        <span className="text-xl leading-none" role="img" aria-label={habit.label}>
+        <span
+          className="text-xl leading-none"
+          role="img"
+          aria-label={habit.label}
+        >
           {habit.emoji}
         </span>
         <span
-          className="font-bold text-sm"
-          style={{ fontFamily: 'var(--font-syne)', color: habit.color }}
+          className="font-display text-xs font-bold"
+          style={{ color: habit.color }}
         >
           {habit.label}
         </span>

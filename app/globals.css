@@ -1,26 +1,99 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #FFFBF5;
-  --color-surface: #ffffff;
-  --color-foreground: #1A1A1A;
-  --color-muted: #6B6B6B;
+  --color-background: #0a0a0f;
+  --color-surface: #1a1a2e;
+  --color-foreground: #f0f0ff;
+  --color-muted: #9999bb;
+  --color-border: #3d3d6b;
+  --color-accent: #00f5ff;
+  --color-yellow: #ffdd00;
+  --color-green: #39ff14;
+  --color-red: #ff4466;
   --font-display: var(--font-syne);
   --font-body: var(--font-dm-sans);
 }
 
+:root {
+  --color-cyan-dim: #007a80;
+  --color-magenta: #ff44cc;
+  --color-magenta-dim: #801055;
+  --color-green-dim: #1a7a00;
+  --color-orange: #ff8833;
+  --color-purple: #cc66ff;
+  --px-shadow: 4px 4px 0px;
+}
+
+@layer utilities {
+  .shadow-px {
+    box-shadow: var(--px-shadow) var(--color-border);
+  }
+  .shadow-px-accent {
+    box-shadow: 4px 4px 0 var(--color-cyan-dim);
+  }
+}
+
+body {
+  background-color: #0a0a0f;
+  color: #f0f0ff;
+  font-family: var(--font-dm-sans, monospace);
+  image-rendering: pixelated;
+  animation: flicker 8s infinite;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes flicker {
+  0%,
+  97%,
+  100% {
+    opacity: 1;
+  }
+  98% {
+    opacity: 0.93;
+  }
+  99% {
+    opacity: 0.96;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @keyframes dot-pop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.25); }
-  100% { transform: scale(1.1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1.1);
+  }
 }
 
 .dot-pop {
   animation: dot-pop 150ms ease-out forwards;
-}
-
-body {
-  background-color: #FFFBF5;
-  color: #1A1A1A;
-  font-family: var(--font-dm-sans, system-ui, sans-serif);
 }

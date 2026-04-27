@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useMemo, useCallback } from 'react';
-import type { Habit, Severity } from '@/lib/habits';
-import { buildYearGrid, severityColor, hexToRgba } from '@/lib/date-utils';
-import HabitHeader from '@/components/habit-header';
+import { useMemo, useCallback } from "react";
+import type { Habit, Severity } from "@/lib/habits";
+import { buildYearGrid, severityColor, hexToRgba } from "@/lib/date-utils";
+import HabitHeader from "@/components/habit-header";
 
-const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 const CELL = 12;
 const ROW_GAP = 4;
 
@@ -29,10 +29,10 @@ function GridCell({ date, severity, color, onSelect }: CellProps) {
 
   return (
     <div
-      role={date ? 'button' : undefined}
+      role={date ? "button" : undefined}
       tabIndex={date ? 0 : undefined}
       onClick={date ? handleClick : undefined}
-      onKeyDown={date ? (e) => e.key === 'Enter' && handleClick() : undefined}
+      onKeyDown={date ? (e) => e.key === "Enter" && handleClick() : undefined}
       aria-label={date ? `${date}, severity ${severity}` : undefined}
       style={{
         width: CELL,
@@ -42,15 +42,18 @@ function GridCell({ date, severity, color, onSelect }: CellProps) {
           ? severity === 0
             ? hexToRgba(color, 0.12)
             : severityColor(severity, color)
-          : 'transparent',
-        borderRadius: 3,
-        cursor: date ? 'pointer' : 'default',
+          : "transparent",
+        cursor: date ? "pointer" : "default",
       }}
     />
   );
 }
 
-export default function HistoryGrid({ habit, logs, onDaySelect }: HistoryGridProps) {
+export default function HistoryGrid({
+  habit,
+  logs,
+  onDaySelect,
+}: HistoryGridProps) {
   const weeks = useMemo(() => buildYearGrid(), []);
   const year = useMemo(() => String(new Date().getFullYear()), []);
 
@@ -60,27 +63,29 @@ export default function HistoryGrid({ habit, logs, onDaySelect }: HistoryGridPro
   );
 
   return (
-    <div className="bg-surface rounded-2xl p-3 shadow-sm">
+    <div className="bg-surface border-2 border-border p-3 shadow-px">
       <div className="mb-3">
         <HabitHeader habit={habit} subtitle={year} />
       </div>
 
-      {/* Day-of-week header */}
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: ROW_GAP }}>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
+      <div className="flex items-center" style={{ marginBottom: ROW_GAP }}>
+        <div className="flex-1 flex justify-between">
           {DAY_LABELS.map((label, i) => (
-            <div key={i} style={{ width: CELL, fontSize: 7 }} className="text-muted text-center">
+            <div
+              key={i}
+              className="font-body text-[7px] text-muted text-center"
+              style={{ width: CELL }}
+            >
               {label}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Week rows */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: ROW_GAP }}>
+      <div className="flex flex-col" style={{ gap: ROW_GAP }}>
         {weeks.map((week, wi) => (
-          <div key={wi} style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div key={wi} className="flex items-center">
+            <div className="flex-1 flex justify-between items-center">
               {week.map((date, di) => (
                 <GridCell
                   key={di}
