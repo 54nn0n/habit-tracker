@@ -59,32 +59,29 @@ export default function HistoryGrid({ habit, logs, onDaySelect }: HistoryGridPro
   );
 
   return (
-    <div
-      style={{
-        backgroundColor: 'var(--color-surface)',
-        border: '2px solid var(--color-border)',
-        boxShadow: 'var(--px-shadow) var(--color-border)',
-        padding: '12px',
-      }}
-    >
+    <div className="bg-surface border-2 border-border p-3 shadow-px">
       <div className="mb-3">
         <HabitHeader habit={habit} subtitle={year} />
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: ROW_GAP }}>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
+      <div className="flex items-center" style={{ marginBottom: ROW_GAP }}>
+        <div className="flex-1 flex justify-between">
           {DAY_LABELS.map((label, i) => (
-            <div key={i} style={{ width: CELL, fontSize: 7, fontFamily: 'var(--font-dm-sans)', color: 'var(--color-muted)', textAlign: 'center' }}>
+            <div
+              key={i}
+              className="font-body text-[7px] text-muted text-center"
+              style={{ width: CELL }}
+            >
               {label}
             </div>
           ))}
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: ROW_GAP }}>
+      <div className="flex flex-col" style={{ gap: ROW_GAP }}>
         {weeks.map((week, wi) => (
-          <div key={wi} style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div key={wi} className="flex items-center">
+            <div className="flex-1 flex justify-between items-center">
               {week.map((date, di) => (
                 <GridCell
                   key={di}

@@ -31,42 +31,29 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end"
-      style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
+      className="fixed inset-0 z-50 flex items-end bg-black/70"
       onClick={handleBackdropClick}
     >
       <div
-        className="w-full p-6 pb-10 max-w-lg mx-auto"
-        style={{
-          backgroundColor: 'var(--color-surface)',
-          borderTop: '2px solid var(--color-accent)',
-          boxShadow: '0 -4px 0 var(--color-cyan-dim)',
-        }}
+        className="w-full p-6 pb-10 max-w-lg mx-auto bg-surface border-t-2 border-t-accent"
+        style={{ boxShadow: '0 -4px 0 var(--color-cyan-dim)' }}
       >
         <div className="flex items-center justify-between mb-5">
-          <h2 style={{ fontFamily: 'var(--font-syne)', fontSize: 10, color: 'var(--color-accent)' }}>
+          <h2 className="font-display text-[10px] text-accent">
             {formatDayDetail(dateStr)}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            style={{
-              fontFamily: 'var(--font-dm-sans)',
-              fontSize: 10,
-              color: 'var(--color-muted)',
-              border: '1px solid var(--color-border)',
-              padding: '4px 10px',
-            }}
+            className="font-body text-[10px] text-muted border border-border px-2.5 py-1 bg-transparent cursor-pointer"
           >
             CLOSE
           </button>
         </div>
 
         {allZero ? (
-          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 11, color: 'var(--color-muted)' }}>
-            Nothing logged
-          </p>
+          <p className="font-body text-[11px] text-muted">Nothing logged</p>
         ) : (
           <div className="flex flex-col gap-4">
             {HABITS.map((habit) => {
@@ -78,17 +65,14 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
                     <span className="text-xl" role="img" aria-label={habit.label}>
                       {habit.emoji}
                     </span>
-                    <span style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 11, color: 'var(--color-foreground)' }}>
+                    <span className="font-body text-[11px] text-foreground">
                       {habit.label}
                     </span>
                   </div>
                   <span
+                    className="font-display text-[8px] text-background px-2 py-1"
                     style={{
-                      fontFamily: 'var(--font-syne)',
-                      fontSize: 8,
-                      padding: '4px 8px',
                       backgroundColor: habit.color,
-                      color: '#0a0a0f',
                       border: `1px solid ${habit.color}`,
                     }}
                   >

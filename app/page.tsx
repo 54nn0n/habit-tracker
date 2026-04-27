@@ -53,15 +53,12 @@ export default function TodayPage() {
     <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
       <header className="mb-6 flex items-start justify-between">
         <div>
-          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-muted)', letterSpacing: 3, textTransform: 'uppercase' }}>
+          <p className="font-body text-[9px] text-muted uppercase tracking-[3px]">
             {monthYear}
           </p>
-          <h1
-            className="mt-2 leading-tight"
-            style={{ fontFamily: 'var(--font-syne)', fontSize: 28, color: 'var(--color-accent)' }}
-          >
+          <h1 className="font-display mt-2 leading-tight text-[28px] text-accent">
             {todayStr.slice(8)}
-            <span style={{ color: 'var(--color-muted)', fontSize: 13, marginLeft: 10 }}>
+            <span className="text-muted text-[13px] ml-2.5">
               {new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase()}
             </span>
           </h1>
@@ -69,8 +66,7 @@ export default function TodayPage() {
         <Link
           href="/settings"
           aria-label="Settings"
-          className="w-10 h-10 flex items-center justify-center transition-colors mt-1"
-          style={{ color: 'var(--color-muted)', border: '1px solid var(--color-border)' }}
+          className="w-10 h-10 flex items-center justify-center transition-colors mt-1 text-muted border border-border"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="3" />

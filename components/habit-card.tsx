@@ -38,8 +38,8 @@ function DayColumn({ day, color, onSeverityChange }: DayColumnProps) {
 export default function HabitCard({ habit, days, onSeverityChange }: HabitCardProps) {
   return (
     <div
+      className="bg-surface"
       style={{
-        backgroundColor: 'var(--color-surface)',
         border: `2px solid ${habit.color}`,
         boxShadow: `var(--px-shadow) ${hexToRgba(habit.color, 0.5)}`,
       }}
@@ -48,10 +48,7 @@ export default function HabitCard({ habit, days, onSeverityChange }: HabitCardPr
         <span className="text-xl leading-none" role="img" aria-label={habit.label}>
           {habit.emoji}
         </span>
-        <span
-          className="text-xs font-bold"
-          style={{ fontFamily: 'var(--font-syne)', color: habit.color }}
-        >
+        <span className="font-display text-xs font-bold" style={{ color: habit.color }}>
           {habit.label}
         </span>
       </div>

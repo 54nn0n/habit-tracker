@@ -41,13 +41,10 @@ export default function YearPage() {
   return (
     <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
       <header className="mb-6">
-        <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-muted)', letterSpacing: 3, textTransform: 'uppercase' }}>
+        <p className="font-body text-[9px] text-muted uppercase tracking-[3px]">
           {new Date().getFullYear()}
         </p>
-        <h1
-          className="mt-2 leading-tight"
-          style={{ fontFamily: 'var(--font-syne)', fontSize: 22, color: 'var(--color-accent)' }}
-        >
+        <h1 className="font-display mt-2 leading-tight text-[22px] text-accent">
           YEAR
         </h1>
       </header>

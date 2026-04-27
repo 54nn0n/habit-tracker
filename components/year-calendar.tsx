@@ -38,15 +38,7 @@ function MonthView({ grid, logs, color, todayStr, onDaySelect }: MonthViewProps)
 
   return (
     <div>
-      <p
-        style={{
-          fontFamily: 'var(--font-dm-sans)',
-          fontSize: 9,
-          fontWeight: 700,
-          marginBottom: 6,
-          color: isFutureMonth ? 'var(--color-muted)' : 'var(--color-foreground)',
-        }}
-      >
+      <p className={`font-body text-[9px] font-bold mb-1.5 ${isFutureMonth ? 'text-muted' : 'text-foreground'}`}>
         {MONTH_NAMES[month - 1]}
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
@@ -81,11 +73,8 @@ function MonthView({ grid, logs, color, todayStr, onDaySelect }: MonthViewProps)
                 }}
               >
                 <span
+                  className={`font-body text-[7px] leading-none ${isToday ? 'font-bold' : ''}`}
                   style={{
-                    fontFamily: 'var(--font-dm-sans)',
-                    fontSize: 7,
-                    lineHeight: 1,
-                    fontWeight: isToday ? 700 : 400,
                     color: isFuture
                       ? hexToRgba('#9999bb', 0.4)
                       : severity === 3
@@ -116,21 +105,14 @@ export default function YearCalendar({ habit, logs, onDaySelect }: YearCalendarP
   );
 
   return (
-    <div
-      style={{
-        backgroundColor: 'var(--color-surface)',
-        border: '2px solid var(--color-border)',
-        boxShadow: 'var(--px-shadow) var(--color-border)',
-        padding: '16px',
-      }}
-    >
+    <div className="bg-surface border-2 border-border p-4 shadow-px">
       <div className="flex items-start justify-between mb-4">
         <HabitHeader habit={habit} subtitle={String(year)} />
         <div className="text-right shrink-0 ml-2">
-          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-foreground)' }}>
+          <p className="font-body text-[9px] text-foreground">
             {stats.loggedDays}/{stats.totalDays} · {stats.percentage}%
           </p>
-          <p style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 9, color: 'var(--color-muted)' }}>
+          <p className="font-body text-[9px] text-muted">
             {stats.longestStreak}d streak
           </p>
         </div>

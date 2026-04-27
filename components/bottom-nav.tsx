@@ -51,12 +51,8 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40"
-      style={{
-        backgroundColor: 'var(--color-surface)',
-        borderTop: '2px solid var(--color-accent)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
-      }}
+      className="fixed bottom-0 left-0 right-0 z-40 bg-surface border-t-2 border-t-accent"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex max-w-lg mx-auto">
         {NAV_ITEMS.map(({ href, label, icon }) => {
@@ -65,14 +61,11 @@ export default function BottomNav() {
             <Link
               key={href}
               href={href}
-              className="flex-1 flex flex-col items-center gap-1 py-3 transition-colors"
-              style={{ color: active ? 'var(--color-accent)' : 'var(--color-muted)' }}
+              className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${active ? 'text-accent' : 'text-muted'}`}
               aria-current={active ? 'page' : undefined}
             >
               {icon(active)}
-              <span style={{ fontFamily: 'var(--font-dm-sans)', fontSize: 8 }}>
-                {label}
-              </span>
+              <span className="font-body text-[8px]">{label}</span>
             </Link>
           );
         })}

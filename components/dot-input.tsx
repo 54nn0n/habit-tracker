@@ -48,23 +48,10 @@ export default function DotInput({
       aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of 3`}
       className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
-      <span
-        className="text-[9px]"
-        style={{
-          fontFamily: 'var(--font-dm-sans)',
-          color: isToday ? 'var(--color-accent)' : 'var(--color-muted)',
-        }}
-      >
+      <span className={`font-body text-[9px] ${isToday ? 'text-accent' : 'text-muted'}`}>
         {dayLabel}
       </span>
-      <span
-        className="text-[9px] leading-none"
-        style={{
-          fontFamily: 'var(--font-dm-sans)',
-          fontWeight: isToday ? 700 : 400,
-          color: isToday ? 'var(--color-foreground)' : 'var(--color-muted)',
-        }}
-      >
+      <span className={`font-body text-[9px] leading-none ${isToday ? 'font-bold text-foreground' : 'text-muted'}`}>
         {dayNumber}
       </span>
       <span
