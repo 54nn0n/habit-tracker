@@ -21,9 +21,16 @@ export default function Last30Days({ allLogs }: Last30DaysProps) {
   }, []);
 
   return (
-    <div className="bg-surface rounded-2xl p-4 shadow-sm">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-muted mb-3">
-        Last 30 Days
+    <div
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        border: '2px solid var(--color-border)',
+        boxShadow: 'var(--px-shadow) var(--color-border)',
+        padding: '16px',
+      }}
+    >
+      <p style={{ fontFamily: 'var(--font-syne)', fontSize: 8, color: 'var(--color-accent)', letterSpacing: 2, marginBottom: 12 }}>
+        LAST 30 DAYS
       </p>
       <div className="flex flex-col gap-2.5">
         {HABITS.map((habit) => (
@@ -45,7 +52,6 @@ export default function Last30Days({ allLogs }: Last30DaysProps) {
                     style={{
                       width: 7,
                       height: 7,
-                      borderRadius: 2,
                       backgroundColor: severity > 0
                         ? severityColor(severity, habit.color)
                         : hexToRgba(habit.color, 0.1),

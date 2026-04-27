@@ -34,10 +34,16 @@ export default function AppShell({ children }: AppShellProps) {
       <SyncMount />
       {offline && (
         <div
-          className="sticky top-0 z-50 w-full flex items-center justify-center py-2 px-4 text-xs font-medium"
-          style={{ backgroundColor: 'var(--color-foreground)', color: 'var(--color-background)' }}
+          className="sticky top-0 z-50 w-full flex items-center justify-center py-2 px-4"
+          style={{
+            backgroundColor: 'var(--color-yellow)',
+            color: '#0a0a0f',
+            fontFamily: 'var(--font-dm-sans)',
+            fontSize: 9,
+            letterSpacing: 1,
+          }}
         >
-          No internet connection — changes saved locally
+          NO INTERNET — CHANGES SAVED LOCALLY
         </div>
       )}
       {children}
