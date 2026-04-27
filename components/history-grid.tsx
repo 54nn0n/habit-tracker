@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useMemo, useCallback } from 'react';
-import type { Habit, Severity } from '@/lib/habits';
-import { buildYearGrid, severityColor, hexToRgba } from '@/lib/date-utils';
-import HabitHeader from '@/components/habit-header';
+import { useMemo, useCallback } from "react";
+import type { Habit, Severity } from "@/lib/habits";
+import { buildYearGrid, severityColor, hexToRgba } from "@/lib/date-utils";
+import HabitHeader from "@/components/habit-header";
 
-const DAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 const CELL = 12;
 const ROW_GAP = 4;
 
@@ -29,10 +29,10 @@ function GridCell({ date, severity, color, onSelect }: CellProps) {
 
   return (
     <div
-      role={date ? 'button' : undefined}
+      role={date ? "button" : undefined}
       tabIndex={date ? 0 : undefined}
       onClick={date ? handleClick : undefined}
-      onKeyDown={date ? (e) => e.key === 'Enter' && handleClick() : undefined}
+      onKeyDown={date ? (e) => e.key === "Enter" && handleClick() : undefined}
       aria-label={date ? `${date}, severity ${severity}` : undefined}
       style={{
         width: CELL,
@@ -42,14 +42,18 @@ function GridCell({ date, severity, color, onSelect }: CellProps) {
           ? severity === 0
             ? hexToRgba(color, 0.12)
             : severityColor(severity, color)
-          : 'transparent',
-        cursor: date ? 'pointer' : 'default',
+          : "transparent",
+        cursor: date ? "pointer" : "default",
       }}
     />
   );
 }
 
-export default function HistoryGrid({ habit, logs, onDaySelect }: HistoryGridProps) {
+export default function HistoryGrid({
+  habit,
+  logs,
+  onDaySelect,
+}: HistoryGridProps) {
   const weeks = useMemo(() => buildYearGrid(), []);
   const year = useMemo(() => String(new Date().getFullYear()), []);
 

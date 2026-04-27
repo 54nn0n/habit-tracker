@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import type { MouseEvent } from 'react';
-import { HABITS } from '@/lib/habits';
-import type { Severity } from '@/lib/habits';
-import { formatDayDetail } from '@/lib/date-utils';
+import { useCallback } from "react";
+import type { MouseEvent } from "react";
+import { HABITS } from "@/lib/habits";
+import type { Severity } from "@/lib/habits";
+import { formatDayDetail } from "@/lib/date-utils";
 
 const SEVERITY_LABELS: Record<Severity, string> = {
-  0: 'None',
-  1: 'Light',
-  2: 'Moderate',
-  3: 'Heavy',
+  0: "None",
+  1: "Light",
+  2: "Moderate",
+  3: "Heavy",
 };
 
 interface DayDetailProps {
@@ -36,7 +36,7 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
     >
       <div
         className="w-full p-6 pb-10 max-w-lg mx-auto bg-surface border-t-2 border-t-accent"
-        style={{ boxShadow: '0 -4px 0 var(--color-cyan-dim)' }}
+        style={{ boxShadow: "0 -4px 0 var(--color-cyan-dim)" }}
       >
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-display text-[10px] text-accent">
@@ -60,9 +60,16 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
               const severity = logs[habit.key] ?? 0;
               if (severity === 0) return null;
               return (
-                <div key={habit.key} className="flex items-center justify-between">
+                <div
+                  key={habit.key}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center gap-2">
-                    <span className="text-xl" role="img" aria-label={habit.label}>
+                    <span
+                      className="text-xl"
+                      role="img"
+                      aria-label={habit.label}
+                    >
                       {habit.emoji}
                     </span>
                     <span className="font-body text-[11px] text-foreground">

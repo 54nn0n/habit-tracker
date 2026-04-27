@@ -1,12 +1,17 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import type { CSSProperties } from 'react';
-import type { Severity } from '@/lib/habits';
-import { SEVERITY_CYCLE } from '@/lib/habits';
-import { hexToRgba } from '@/lib/date-utils';
+import { useCallback } from "react";
+import type { CSSProperties } from "react";
+import type { Severity } from "@/lib/habits";
+import { SEVERITY_CYCLE } from "@/lib/habits";
+import { hexToRgba } from "@/lib/date-utils";
 
-const SEVERITY_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.35, 2: 0.65, 3: 1 };
+const SEVERITY_ALPHAS: Record<Severity, number> = {
+  0: 0,
+  1: 0.35,
+  2: 0.65,
+  3: 1,
+};
 
 function squareStyle(severity: Severity, color: string): CSSProperties {
   if (severity === 0) {
@@ -48,10 +53,14 @@ export default function DotInput({
       aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of 3`}
       className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
-      <span className={`font-body text-[9px] ${isToday ? 'text-accent' : 'text-muted'}`}>
+      <span
+        className={`font-body text-[9px] ${isToday ? "text-accent" : "text-muted"}`}
+      >
         {dayLabel}
       </span>
-      <span className={`font-body text-[9px] leading-none ${isToday ? 'font-bold text-foreground' : 'text-muted'}`}>
+      <span
+        className={`font-body text-[9px] leading-none ${isToday ? "font-bold text-foreground" : "text-muted"}`}
+      >
         {dayNumber}
       </span>
       <span

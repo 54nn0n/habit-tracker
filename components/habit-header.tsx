@@ -1,5 +1,5 @@
-import type { Habit } from '@/lib/habits';
-import { hexToRgba } from '@/lib/date-utils';
+import type { Habit } from "@/lib/habits";
+import { hexToRgba } from "@/lib/date-utils";
 
 interface HabitHeaderProps {
   habit: Habit;
@@ -21,12 +21,13 @@ export default function HabitHeader({ habit, subtitle }: HabitHeaderProps) {
         </span>
       </div>
       <div>
-        <p className="font-display leading-tight text-[9px]" style={{ color: habit.color }}>
+        <p
+          className="font-display leading-tight text-[9px]"
+          style={{ color: habit.color }}
+        >
           {habit.label}
         </p>
-        <p className="font-body text-[10px] text-muted">
-          {subtitle}
-        </p>
+        <p className="font-body text-[10px] text-muted">{subtitle}</p>
       </div>
     </div>
   );

@@ -42,36 +42,56 @@ body {
 }
 
 body::before {
-  content: '';
+  content: "";
   position: fixed;
   inset: 0;
   background: repeating-linear-gradient(
     0deg,
-    transparent, transparent 2px,
-    rgba(0, 0, 0, 0.06) 2px, rgba(0, 0, 0, 0.06) 4px
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
   );
   pointer-events: none;
   z-index: 9999;
 }
 
 @keyframes flicker {
-  0%, 97%, 100% { opacity: 1; }
-  98% { opacity: 0.93; }
-  99% { opacity: 0.96; }
+  0%,
+  97%,
+  100% {
+    opacity: 1;
+  }
+  98% {
+    opacity: 0.93;
+  }
+  99% {
+    opacity: 0.96;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body { animation: none; }
-  *, *::before, *::after {
+  body {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
 
 @keyframes dot-pop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.25); }
-  100% { transform: scale(1.1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1.1);
+  }
 }
 
 .dot-pop {

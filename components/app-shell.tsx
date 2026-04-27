@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
-import { useSync } from '@/lib/use-sync';
+import { useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import { useSync } from "@/lib/use-sync";
 
 interface AppShellProps {
   children: ReactNode;
@@ -15,17 +15,17 @@ function SyncMount() {
 
 export default function AppShell({ children }: AppShellProps) {
   const [offline, setOffline] = useState(() =>
-    typeof navigator !== 'undefined' ? !navigator.onLine : false,
+    typeof navigator !== "undefined" ? !navigator.onLine : false,
   );
 
   useEffect(() => {
     const on = () => setOffline(false);
     const off = () => setOffline(true);
-    window.addEventListener('online', on);
-    window.addEventListener('offline', off);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
     return () => {
-      window.removeEventListener('online', on);
-      window.removeEventListener('offline', off);
+      window.removeEventListener("online", on);
+      window.removeEventListener("offline", off);
     };
   }, []);
 

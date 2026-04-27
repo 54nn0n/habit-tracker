@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
   {
-    href: '/',
-    label: 'Today',
+    href: "/",
+    label: "Today",
     icon: (active: boolean) => (
       <svg
         width="22"
         height="22"
         viewBox="0 0 24 24"
-        fill={active ? 'currentColor' : 'none'}
+        fill={active ? "currentColor" : "none"}
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
@@ -25,15 +25,15 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: '/history',
-    label: 'Year',
+    href: "/history",
+    label: "Year",
     icon: (active: boolean) => (
       <svg
         width="22"
         height="22"
         viewBox="0 0 24 24"
-        fill={active ? 'currentColor' : 'none'}
-        stroke={active ? 'none' : 'currentColor'}
+        fill={active ? "currentColor" : "none"}
+        stroke={active ? "none" : "currentColor"}
         strokeWidth="1.5"
         aria-hidden="true"
       >
@@ -52,7 +52,7 @@ export default function BottomNav() {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-40 bg-surface border-t-2 border-t-accent"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="flex max-w-lg mx-auto">
         {NAV_ITEMS.map(({ href, label, icon }) => {
@@ -61,8 +61,8 @@ export default function BottomNav() {
             <Link
               key={href}
               href={href}
-              className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${active ? 'text-accent' : 'text-muted'}`}
-              aria-current={active ? 'page' : undefined}
+              className={`flex-1 flex flex-col items-center gap-1 py-3 transition-colors ${active ? "text-accent" : "text-muted"}`}
+              aria-current={active ? "page" : undefined}
             >
               {icon(active)}
               <span className="font-body text-[8px]">{label}</span>
