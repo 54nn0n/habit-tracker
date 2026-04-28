@@ -100,7 +100,7 @@ function MonthView({
                 }}
               >
                 <span
-                  className={`font-body text-[7px] leading-none ${isToday ? "font-bold" : ""}`}
+                  className={`font-body text-xs leading-none ${isToday ? "font-bold" : ""}`}
                   style={{
                     color: isFuture
                       ? hexToRgba("#9999bb", 0.4)

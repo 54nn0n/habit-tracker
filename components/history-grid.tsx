@@ -73,7 +73,7 @@ export default function HistoryGrid({
           {DAY_LABELS.map((label, i) => (
             <div
               key={i}
-              className="font-body text-[7px] text-muted text-center"
+              className="font-body text-xxs text-muted text-center"
               style={{ width: CELL }}
             >
               {label}

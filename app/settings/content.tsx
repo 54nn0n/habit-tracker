@@ -161,7 +161,7 @@ function SettingsInner() {
             <button
               type="button"
               onClick={handleConnect}
-              className="font-display text-xs text-background bg-accent border-2 border-accent w-full p-3 text-center cursor-pointer shadow-px-accent"
+              className="font-display text-background bg-accent border-2 border-accent w-full p-3 text-center cursor-pointer shadow-px-accent"
             >
               CONNECT GOOGLE DRIVE
             </button>
