@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, lazy, Suspense } from "react";
-import { HABITS } from "@/lib/habits";
-import type { Severity } from "@/lib/habits";
+import type { Habit, Severity } from "@/lib/habits";
 import {
   hexToRgba,
   toLocalDateString,
@@ -14,10 +13,19 @@ import HabitCard from "@/components/habit-card";
 import DayDetail from "@/components/day-detail";
 import BackButton from "@/components/back-button";
 import Button from "@/components/button";
+import TextInput from "@/components/text-input";
+import SegmentedToggle from "@/components/segmented-toggle";
 import Last30Days from "@/components/last-30-days";
 import BottomNav from "@/components/bottom-nav";
 
 const YearCalendar = lazy(() => import("@/components/year-calendar"));
+
+const MOCK_HABITS: Habit[] = [
+  { key: "red_meat", label: "Red Meat", emoji: "🥩", color: "#ff4466", direction: "reducing", logType: "severity", order: 0 },
+  { key: "poultry", label: "Poultry", emoji: "🍗", color: "#ff8833", direction: "reducing", logType: "severity", order: 1 },
+  { key: "fish", label: "Fish", emoji: "🐟", color: "#00f5ff", direction: "reducing", logType: "severity", order: 2 },
+  { key: "alcohol", label: "Alcohol", emoji: "🍷", color: "#cc66ff", direction: "reducing", logType: "severity", order: 3 },
+];
 
 const COLOR_TOKENS = [
   { name: "--black / bg", value: "#0a0a0f" },
@@ -140,7 +148,7 @@ export default function DesignPage() {
               </div>
             </div>
           ))}
-          {HABITS.map((h) => (
+          {MOCK_HABITS.map((h) => (
             <div key={h.key} className="flex items-center gap-2.5">
               <div
                 style={{
@@ -233,14 +241,14 @@ export default function DesignPage() {
                       backgroundColor:
                         s === 0
                           ? "transparent"
-                          : hexToRgba(HABITS[0].color, DOT_ALPHAS[s]),
+                          : hexToRgba(MOCK_HABITS[0].color, DOT_ALPHAS[s]),
                       border:
                         s === 0
-                          ? `2px solid ${hexToRgba(HABITS[0].color, 0.35)}`
-                          : `2px solid ${HABITS[0].color}`,
+                          ? `2px solid ${hexToRgba(MOCK_HABITS[0].color, 0.35)}`
+                          : `2px solid ${MOCK_HABITS[0].color}`,
                       boxShadow:
                         s === 2
-                          ? `0 0 6px ${hexToRgba(HABITS[0].color, 0.7)}`
+                          ? `0 0 6px ${hexToRgba(MOCK_HABITS[0].color, 0.7)}`
                           : undefined,
                     }}
                   />
@@ -263,7 +271,7 @@ export default function DesignPage() {
                       width: 36,
                       height: 36,
                       backgroundColor: hexToRgba(
-                        HABITS[0].color,
+                        MOCK_HABITS[0].color,
                         s === 0 ? 0.12 : DOT_ALPHAS[s],
                       ),
                     }}
@@ -283,7 +291,7 @@ export default function DesignPage() {
           {"// Habit Cards"}
         </p>
         <div className="flex flex-col gap-3">
-          {HABITS.map((h) => (
+          {MOCK_HABITS.map((h) => (
             <HabitCard
               key={h.key}
               habit={h}
@@ -325,6 +333,26 @@ export default function DesignPage() {
 
       <section className="mb-10">
         <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
+          {"// Form Controls"}
+        </p>
+        <div className="flex flex-col gap-4">
+          <TextInput label="Name" value="Running" onChange={handleNoOp} placeholder="e.g. Running" maxLength={32} />
+          <TextInput label="Emoji" value="🏃" onChange={handleNoOp} maxLength={4} inputClassName="w-16 text-xl text-center" />
+          <SegmentedToggle
+            label="Direction"
+            options={[
+              { value: "building", label: "BUILDING", description: "Streak = consecutive days with a log" },
+              { value: "reducing", label: "REDUCING", description: "Streak = consecutive days without logging" },
+            ]}
+            value="building"
+            color="#00f5ff"
+            onChange={handleNoOp}
+          />
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
           {"// Last 30 Days"}
         </p>
         <Last30Days allLogs={MOCK_ALL_LOGS} />
@@ -336,7 +364,7 @@ export default function DesignPage() {
         </p>
         <Suspense>
           <YearCalendar
-            habit={HABITS[0]}
+            habit={MOCK_HABITS[0]}
             logs={MOCK_LOGS}
             onDaySelect={handleNoOp}
           />

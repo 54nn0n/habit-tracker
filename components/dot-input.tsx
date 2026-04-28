@@ -2,8 +2,8 @@
 
 import { useCallback } from "react";
 import type { CSSProperties } from "react";
-import type { Severity } from "@/lib/habits";
-import { SEVERITY_CYCLE } from "@/lib/habits";
+import type { Severity, HabitLogType } from "@/lib/habits";
+import { nextSeverity } from "@/lib/habits";
 import { hexToRgba } from "@/lib/date-utils";
 
 const SEVERITY_ALPHAS: Record<Severity, number> = {
@@ -26,6 +26,7 @@ function squareStyle(severity: Severity, color: string): CSSProperties {
 interface DotInputProps {
   severity: Severity;
   color: string;
+  logType: HabitLogType;
   dayLabel: string;
   dayNumber: number;
   isToday: boolean;
@@ -35,21 +36,22 @@ interface DotInputProps {
 export default function DotInput({
   severity,
   color,
+  logType,
   dayLabel,
   dayNumber,
   isToday,
   onChange,
 }: DotInputProps) {
   const handleTap = useCallback(
-    () => onChange(SEVERITY_CYCLE[severity]),
-    [severity, onChange],
+    () => onChange(nextSeverity(severity, logType)),
+    [severity, logType, onChange],
   );
 
   return (
     <button
       type="button"
       onClick={handleTap}
-      aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of 2`}
+      aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of ${logType === "boolean" ? 1 : 2}`}
       className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
       <span

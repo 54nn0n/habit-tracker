@@ -2,8 +2,8 @@
 
 import { useCallback } from "react";
 import type { MouseEvent } from "react";
-import { HABITS } from "@/lib/habits";
 import type { Severity } from "@/lib/habits";
+import { useHabits } from "@/lib/use-habits";
 import { formatDayDetail } from "@/lib/date-utils";
 import Button from "@/components/button";
 
@@ -20,6 +20,8 @@ interface DayDetailProps {
 }
 
 export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
+  const habits = useHabits();
+
   const handleBackdropClick = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
       if (e.target === e.currentTarget) onClose();
@@ -27,7 +29,7 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
     [onClose],
   );
 
-  const allZero = HABITS.every((h) => (logs[h.key] ?? 0) === 0);
+  const allZero = habits.every((h) => (logs[h.key] ?? 0) === 0);
 
   return (
     <div
@@ -56,7 +58,7 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
           <p className="font-body text-[11px] text-muted">Nothing logged</p>
         ) : (
           <div className="flex flex-col gap-4">
-            {HABITS.map((habit) => {
+            {habits.map((habit) => {
               const severity = logs[habit.key] ?? 0;
               if (severity === 0) return null;
               return (
