@@ -22,6 +22,7 @@ function CallbackHandler() {
     }
 
     exchangeCode(code)
+      .then(() => import('@/lib/sync').then(({ loadFromDrive }) => loadFromDrive()))
       .then(() => router.replace('/settings'))
       .catch(() => router.replace('/settings?error=auth_failed'));
   }, [searchParams, router]);
