@@ -42,7 +42,12 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
           <h2 className="font-display text-xs text-accent">
             {formatDayDetail(dateStr)}
           </h2>
-          <Button variant="muted" size="sm" onClick={onClose} aria-label="Close">
+          <Button
+            variant="muted"
+            size="sm"
+            onClick={onClose}
+            aria-label="Close"
+          >
             CLOSE
           </Button>
         </div>

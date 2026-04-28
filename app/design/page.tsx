@@ -9,16 +9,15 @@ import {
   formatMonthYear,
 } from "@/lib/date-utils";
 import type { HabitDayEntry } from "@/lib/date-utils";
+import type { AllLogs } from "@/lib/storage";
 import HabitCard from "@/components/habit-card";
 import DayDetail from "@/components/day-detail";
 import BackButton from "@/components/back-button";
 import Button from "@/components/button";
 import Last30Days from "@/components/last-30-days";
 import BottomNav from "@/components/bottom-nav";
-import type { AllLogs } from "@/lib/storage";
 
 const YearCalendar = lazy(() => import("@/components/year-calendar"));
-
 
 const COLOR_TOKENS = [
   { name: "--black / bg", value: "#0a0a0f" },
@@ -40,7 +39,6 @@ const SEVERITY_LABELS: Record<Severity, string> = {
   1: "Light",
   2: "Heavy",
 };
-
 const DOT_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.5, 2: 1 };
 const SEVERITIES: Severity[] = [0, 1, 2];
 
@@ -84,12 +82,11 @@ export default function DesignPage() {
   const [detailDate, setDetailDate] = useState<string | null>(null);
   const todayStr = useMemo(() => toLocalDateString(new Date()), []);
   const monthYear = useMemo(() => formatMonthYear(new Date()), []);
-  const year = useMemo(() => String(new Date().getFullYear()), []);
 
   const mockDays = useMemo((): HabitDayEntry[] => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const severities: Severity[] = [1, 2, 0, 2, 0];
+    const severities = [1, 2, 0, 2, 0] as const;
     return Array.from({ length: 5 }, (_, i) => {
       const d = new Date(today);
       d.setDate(today.getDate() - (4 - i));
