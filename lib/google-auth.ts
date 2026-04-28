@@ -132,10 +132,12 @@ async function refreshToken(): Promise<string | null> {
 }
 
 export function isConnected(): boolean {
+  if (typeof window === "undefined") return false;
   return !!localStorage.getItem(KEYS.accessToken);
 }
 
 export function getEmail(): string | null {
+  if (typeof window === "undefined") return null;
   return localStorage.getItem(KEYS.email);
 }
 
