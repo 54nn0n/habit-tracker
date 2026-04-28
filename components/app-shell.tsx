@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
 
 interface AppShellProps {
@@ -17,30 +17,27 @@ function subscribeOnlineStatus(callback: () => void) {
 }
 
 function SyncMount() {
-  const mounted = useRef(false);
-
   useEffect(() => {
-    if (mounted.current) return;
-    mounted.current = true;
-
-    let cleanupFn = () => {};
+    let cancelled = false;
 
     Promise.all([import("@/lib/sync"), import("@/lib/storage")]).then(
       ([{ loadFromDrive, scheduleSync, syncNow }, { setWriteCallback }]) => {
+        if (cancelled) return;
         setWriteCallback(scheduleSync);
-        cleanupFn = () => setWriteCallback(() => {});
         loadFromDrive();
-
         window.addEventListener("online", syncNow);
-        const prev = cleanupFn;
-        cleanupFn = () => {
-          prev();
-          window.removeEventListener("online", syncNow);
-        };
       },
     );
 
-    return () => cleanupFn();
+    return () => {
+      cancelled = true;
+      import("@/lib/storage").then(({ setWriteCallback }) =>
+        setWriteCallback(() => {}),
+      );
+      import("@/lib/sync").then(({ syncNow }) =>
+        window.removeEventListener("online", syncNow),
+      );
+    };
   }, []);
 
   return null;
