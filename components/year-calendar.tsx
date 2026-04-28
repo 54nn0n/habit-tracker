@@ -100,7 +100,7 @@ function MonthView({
                 }}
               >
                 <span
-                  className={`font-body text-xs leading-none ${isToday ? "font-bold" : ""}`}
+                  className={`font-body leading-none inline min-[320px]:hidden min-[360px]:inline ${isToday ? "font-bold text-xs" : "text-[9px]"}`}
                   style={{
                     color: isFuture
                       ? hexToRgba("#9999bb", 0.4)
@@ -137,9 +137,9 @@ export default function YearCalendar({
 
   return (
     <div className="bg-surface border-2 border-border p-4 shadow-px">
-      <div className="flex items-start justify-between mb-4">
+      <div className="mb-4">
         <HabitHeader habit={habit} subtitle={String(year)} />
-        <div className="text-right shrink-0 ml-2">
+        <div className="mt-2">
           <p className="font-body text-xs text-foreground">
             {stats.loggedDays}/{stats.totalDays} · {stats.percentage}%
           </p>
@@ -149,13 +149,7 @@ export default function YearCalendar({
         </div>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 16,
-        }}
-      >
+      <div className="grid grid-cols-1 min-[320px]:grid-cols-2 min-[420px]:grid-cols-3 gap-4">
         {months.map((grid) => (
           <MonthView
             key={grid.month}

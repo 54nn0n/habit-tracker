@@ -31,16 +31,19 @@ function notify(): void {
 
 export function subscribeToLogs(listener: () => void): () => void {
   if (listeners.size === 0 && typeof window !== "undefined") {
-    snapshot = readAll();
+    const loaded = readAll();
+    if (loaded !== snapshot) {
+      snapshot = loaded;
+      // Notify after subscribe returns so React can schedule a re-render
+      // without conflicting with the current render/hydration pass
+      Promise.resolve().then(() => listeners.forEach((fn) => fn()));
+    }
   }
   listeners.add(listener);
   return () => listeners.delete(listener);
 }
 
 export function getLogsSnapshot(): AllLogs {
-  if (snapshot === EMPTY_LOGS && typeof window !== "undefined") {
-    snapshot = readAll();
-  }
   return snapshot;
 }
 
