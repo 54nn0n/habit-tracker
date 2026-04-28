@@ -35,10 +35,10 @@ const SECTION_LABEL =
 const PANEL =
   "bg-surface border-2 border-border p-4 flex flex-col gap-3 shadow-px";
 const BTN_GHOST =
-  "font-body text-[10px] text-accent border-2 border-accent px-3.5 py-2 bg-transparent cursor-pointer tracking-[0.5px] shadow-px-accent";
+  "font-body text-xs text-accent border-2 border-accent px-3.5 py-2 bg-transparent cursor-pointer tracking-[0.5px] shadow-px-accent";
 const BTN_BLOCK = `${BTN_GHOST} w-full p-3 text-center`;
 const BTN_MUTED =
-  "font-body text-[10px] text-muted border border-border px-3 py-1.5 bg-transparent cursor-pointer";
+  "font-body text-xs text-muted border border-border px-3 py-1.5 bg-transparent cursor-pointer";
 
 function SettingsInner() {
   const searchParams = useSearchParams();
@@ -108,7 +108,7 @@ function SettingsInner() {
         <p className={SECTION_LABEL}>{"// Google Drive"}</p>
         <div className={PANEL}>
           {authError && (
-            <p className="font-body text-[10px] text-red">
+            <p className="font-body text-xs text-red">
               ✕ Connection failed. Please try again.
             </p>
           )}
@@ -134,7 +134,7 @@ function SettingsInner() {
               <div className="flex items-center justify-between">
                 <div>
                   <p
-                    className={`font-body text-[10px] ${STATUS_CLASS[syncStatus]}`}
+                    className={`font-body text-xs ${STATUS_CLASS[syncStatus]}`}
                   >
                     {STATUS_LABEL[syncStatus]}
                   </p>
@@ -190,7 +190,7 @@ function SettingsInner() {
             onChange={handleImport}
           />
           {importError && (
-            <p className="font-body text-[10px] text-red">✕ {importError}</p>
+            <p className="font-body text-xs text-red">✕ {importError}</p>
           )}
         </div>
       </section>
@@ -199,7 +199,7 @@ function SettingsInner() {
         <p className={SECTION_LABEL}>{"// About"}</p>
         <div className={`${PANEL} gap-1`}>
           <p className="font-display text-xs text-foreground">93 HABITS</p>
-          <p className="font-body text-[10px] text-muted">v{VERSION}</p>
+          <p className="font-body text-xs text-muted">v{VERSION}</p>
         </div>
       </section>
     </div>

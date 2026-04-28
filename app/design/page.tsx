@@ -317,7 +317,7 @@ export default function DesignPage() {
           className="bg-surface border-2 border-border shadow-px p-4 w-full text-left cursor-pointer"
         >
           <p className="font-display text-xs text-accent">OPEN DAY DETAIL</p>
-          <p className="font-body text-[10px] text-muted mt-1">
+          <p className="font-body text-xs text-muted mt-1">
             Bottom sheet — logged habits for a date
           </p>
         </button>

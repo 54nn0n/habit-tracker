@@ -27,7 +27,7 @@ export default function HabitHeader({ habit, subtitle }: HabitHeaderProps) {
         >
           {habit.label}
         </p>
-        <p className="font-body text-[10px] text-muted">{subtitle}</p>
+        <p className="font-body text-xs text-muted">{subtitle}</p>
       </div>
     </div>
   );
