@@ -11,6 +11,7 @@ import {
 import type { HabitDayEntry } from "@/lib/date-utils";
 import HabitCard from "@/components/habit-card";
 import DayDetail from "@/components/day-detail";
+import BackButton from "@/components/back-button";
 import Button from "@/components/button";
 import Last30Days from "@/components/last-30-days";
 import BottomNav from "@/components/bottom-nav";
@@ -301,6 +302,7 @@ export default function DesignPage() {
           {"// Buttons"}
         </p>
         <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-3">
+          <BackButton href="/" />
           <Button variant="primary" className="w-full text-center">
             CONNECT GOOGLE DRIVE
           </Button>

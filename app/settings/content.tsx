@@ -13,6 +13,7 @@ import { subscribeSyncStatus, syncNow } from "@/lib/sync";
 import type { SyncStatus } from "@/lib/sync";
 import { encodeLogs, decodeLogs } from "@/lib/md-codec";
 import { getAllLogs, setAllLogs } from "@/lib/storage";
+import BackButton from "@/components/back-button";
 import Button from "@/components/button";
 
 const VERSION = "0.2.0";
@@ -92,6 +93,7 @@ function SettingsInner() {
   return (
     <div className="px-4 pt-10 pb-20 max-w-lg mx-auto w-full">
       <header className="mb-8">
+        <BackButton href="/" />
         <p className="font-body text-xs text-muted uppercase tracking-[3px]">
           App
         </p>
