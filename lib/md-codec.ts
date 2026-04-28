@@ -22,7 +22,7 @@ const ROW_RE =
   /^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|\s*(\d)\s*\|/;
 
 function toSeverity(n: number): Severity {
-  return (n >= 0 && n <= 3 ? n : 0) as Severity;
+  return (n >= 0 && n <= 2 ? n : 0) as Severity;
 }
 
 export function decodeLogs(md: string): AllLogs {

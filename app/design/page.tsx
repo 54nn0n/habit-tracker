@@ -33,24 +33,23 @@ const COLOR_TOKENS = [
 const SEVERITY_LABELS: Record<Severity, string> = {
   0: "None",
   1: "Light",
-  2: "Moderate",
-  3: "Heavy",
+  2: "Heavy",
 };
 
-const DOT_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.35, 2: 0.65, 3: 1 };
-const SEVERITIES: Severity[] = [0, 1, 2, 3];
+const DOT_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.5, 2: 1 };
+const SEVERITIES: Severity[] = [0, 1, 2];
 
 const MOCK_LOGS: Record<string, Severity> = {
   "2026-01-08": 2,
   "2026-01-19": 1,
-  "2026-01-30": 3,
+  "2026-01-30": 2,
   "2026-02-11": 2,
   "2026-02-22": 1,
-  "2026-03-04": 3,
+  "2026-03-04": 2,
   "2026-03-17": 2,
   "2026-03-28": 1,
   "2026-04-05": 2,
-  "2026-04-14": 3,
+  "2026-04-14": 2,
   "2026-04-20": 1,
   "2026-04-24": 2,
 };
@@ -59,7 +58,7 @@ const MOCK_DETAIL_LOGS: Record<string, Severity> = {
   red_meat: 2,
   poultry: 0,
   fish: 1,
-  alcohol: 3,
+  alcohol: 2,
 };
 
 export default function DesignPage() {
@@ -71,7 +70,7 @@ export default function DesignPage() {
   const mockDays = useMemo((): HabitDayEntry[] => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const severities: Severity[] = [1, 3, 0, 2, 0];
+    const severities: Severity[] = [1, 2, 0, 2, 0];
     return Array.from({ length: 5 }, (_, i) => {
       const d = new Date(today);
       d.setDate(today.getDate() - (4 - i));
@@ -235,7 +234,7 @@ export default function DesignPage() {
                           ? `2px solid ${hexToRgba(HABITS[0].color, 0.35)}`
                           : `2px solid ${HABITS[0].color}`,
                       boxShadow:
-                        s === 3
+                        s === 2
                           ? `0 0 6px ${hexToRgba(HABITS[0].color, 0.7)}`
                           : undefined,
                     }}

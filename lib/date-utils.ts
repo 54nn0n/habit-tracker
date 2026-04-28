@@ -101,7 +101,7 @@ export function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-const SEVERITY_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.35, 2: 0.65, 3: 1 };
+const SEVERITY_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.5, 2: 1 };
 
 export function severityColor(severity: Severity, habitColor: string): string {
   if (severity === 0) return 'transparent';
