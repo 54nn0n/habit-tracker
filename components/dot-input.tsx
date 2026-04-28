@@ -8,9 +8,8 @@ import { hexToRgba } from "@/lib/date-utils";
 
 const SEVERITY_ALPHAS: Record<Severity, number> = {
   0: 0,
-  1: 0.35,
-  2: 0.65,
-  3: 1,
+  1: 0.5,
+  2: 1,
 };
 
 function squareStyle(severity: Severity, color: string): CSSProperties {
@@ -20,7 +19,7 @@ function squareStyle(severity: Severity, color: string): CSSProperties {
   return {
     backgroundColor: hexToRgba(color, SEVERITY_ALPHAS[severity]),
     border: `2px solid ${color}`,
-    boxShadow: severity === 3 ? `0 0 6px ${hexToRgba(color, 0.7)}` : undefined,
+    boxShadow: severity === 2 ? `0 0 6px ${hexToRgba(color, 0.7)}` : undefined,
   };
 }
 
@@ -50,7 +49,7 @@ export default function DotInput({
     <button
       type="button"
       onClick={handleTap}
-      aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of 3`}
+      aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of 2`}
       className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
       <span

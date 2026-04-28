@@ -104,7 +104,7 @@ function MonthView({
                   style={{
                     color: isFuture
                       ? hexToRgba("#9999bb", 0.4)
-                      : severity === 3
+                      : severity === 2
                         ? "#0a0a0f"
                         : "var(--color-foreground)",
                   }}

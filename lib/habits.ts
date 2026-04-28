@@ -1,5 +1,5 @@
 export type HabitKey = "red_meat" | "poultry" | "fish" | "alcohol";
-export type Severity = 0 | 1 | 2 | 3;
+export type Severity = 0 | 1 | 2;
 
 export interface Habit {
   key: HabitKey;
@@ -18,6 +18,5 @@ export const HABITS: Habit[] = [
 export const SEVERITY_CYCLE: Record<Severity, Severity> = {
   0: 1,
   1: 2,
-  2: 3,
-  3: 0,
+  2: 0,
 };

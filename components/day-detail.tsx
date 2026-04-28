@@ -9,8 +9,7 @@ import { formatDayDetail } from "@/lib/date-utils";
 const SEVERITY_LABELS: Record<Severity, string> = {
   0: "None",
   1: "Light",
-  2: "Moderate",
-  3: "Heavy",
+  2: "Heavy",
 };
 
 interface DayDetailProps {
