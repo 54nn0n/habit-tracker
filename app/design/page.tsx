@@ -11,9 +11,13 @@ import {
 import type { HabitDayEntry } from "@/lib/date-utils";
 import HabitCard from "@/components/habit-card";
 import DayDetail from "@/components/day-detail";
-import HabitHeader from "@/components/habit-header";
+import Button from "@/components/button";
+import Last30Days from "@/components/last-30-days";
+import BottomNav from "@/components/bottom-nav";
+import type { AllLogs } from "@/lib/storage";
 
-const HistoryGrid = lazy(() => import("@/components/history-grid"));
+const YearCalendar = lazy(() => import("@/components/year-calendar"));
+
 
 const COLOR_TOKENS = [
   { name: "--black / bg", value: "#0a0a0f" },
@@ -52,6 +56,20 @@ const MOCK_LOGS: Record<string, Severity> = {
   "2026-04-14": 2,
   "2026-04-20": 1,
   "2026-04-24": 2,
+};
+
+const MOCK_ALL_LOGS: AllLogs = {
+  "2026-01-08": { red_meat: 2 },
+  "2026-01-19": { poultry: 1 },
+  "2026-02-11": { fish: 2, alcohol: 1 },
+  "2026-02-22": { red_meat: 1 },
+  "2026-03-04": { alcohol: 2 },
+  "2026-03-17": { poultry: 2 },
+  "2026-03-28": { fish: 1 },
+  "2026-04-05": { red_meat: 2 },
+  "2026-04-14": { alcohol: 2 },
+  "2026-04-20": { poultry: 1 },
+  "2026-04-24": { red_meat: 2, fish: 1 },
 };
 
 const MOCK_DETAIL_LOGS: Record<string, Severity> = {
@@ -175,7 +193,7 @@ export default function DesignPage() {
               <p className="text-[11px] text-foreground">
                 Small 11 — Player one
               </p>
-              <p className="text-xs text-muted">Caption 9 — © 1985</p>
+              <p className="text-xs text-muted">Caption 12 — © 1985</p>
             </div>
           </div>
           <div>
@@ -195,17 +213,6 @@ export default function DesignPage() {
               20 GOTO 10
             </p>
           </div>
-        </div>
-      </section>
-
-      <section className="mb-10">
-        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
-          {"// Habit Headers"}
-        </p>
-        <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-3">
-          {HABITS.map((h) => (
-            <HabitHeader key={h.key} habit={h} subtitle={year} />
-          ))}
         </div>
       </section>
 
@@ -291,19 +298,58 @@ export default function DesignPage() {
 
       <section className="mb-10">
         <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
-          {"// History Grid"}
+          {"// Buttons"}
         </p>
-        <div className="grid grid-cols-2 gap-3">
-          <Suspense>
-            {HABITS.map((h) => (
-              <HistoryGrid
-                key={h.key}
-                habit={h}
-                logs={MOCK_LOGS}
-                onDaySelect={handleNoOp}
-              />
-            ))}
-          </Suspense>
+        <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-3">
+          <Button variant="primary" className="w-full text-center">
+            CONNECT GOOGLE DRIVE
+          </Button>
+          <div className="flex gap-3">
+            <Button variant="secondary" className="flex-1 text-center">
+              EXPORT
+            </Button>
+            <Button variant="secondary" className="flex-1 text-center">
+              IMPORT
+            </Button>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="muted">DISCONNECT</Button>
+            <Button variant="muted" disabled>
+              SYNC NOW
+            </Button>
+            <Button variant="muted" size="sm">
+              CLOSE
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
+          {"// Last 30 Days"}
+        </p>
+        <Last30Days allLogs={MOCK_ALL_LOGS} />
+      </section>
+
+      <section className="mb-10">
+        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
+          {"// Year Calendar"}
+        </p>
+        <Suspense>
+          <YearCalendar
+            habit={HABITS[0]}
+            logs={MOCK_LOGS}
+            onDaySelect={handleNoOp}
+          />
+        </Suspense>
+      </section>
+
+      <section className="mb-10">
+        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
+          {"// Bottom Nav"}
+        </p>
+        <div className="relative h-16 bg-surface border-2 border-border overflow-hidden">
+          <BottomNav />
         </div>
       </section>
 

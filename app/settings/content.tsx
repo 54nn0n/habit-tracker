@@ -13,6 +13,7 @@ import { subscribeSyncStatus, syncNow } from "@/lib/sync";
 import type { SyncStatus } from "@/lib/sync";
 import { encodeLogs, decodeLogs } from "@/lib/md-codec";
 import { getAllLogs, setAllLogs } from "@/lib/storage";
+import Button from "@/components/button";
 
 const VERSION = "0.2.0";
 
@@ -34,11 +35,6 @@ const SECTION_LABEL =
   "font-display text-[8px] text-accent tracking-[2px] uppercase mb-2";
 const PANEL =
   "bg-surface border-2 border-border p-4 flex flex-col gap-3 shadow-px";
-const BTN_GHOST =
-  "font-body text-xs text-accent border-2 border-accent px-3.5 py-2 bg-transparent cursor-pointer tracking-[0.5px] shadow-px-accent";
-const BTN_BLOCK = `${BTN_GHOST} w-full p-3 text-center`;
-const BTN_MUTED =
-  "font-body text-xs text-muted border border-border px-3 py-1.5 bg-transparent cursor-pointer";
 
 function SettingsInner() {
   const searchParams = useSearchParams();
@@ -119,17 +115,11 @@ function SettingsInner() {
                   <p className="font-body text-[11px] text-green">
                     ▶ CONNECTED
                   </p>
-                  <p className="font-body text-xs text-muted mt-0.5">
-                    {email}
-                  </p>
+                  <p className="font-body text-xs text-muted mt-0.5">{email}</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleDisconnect}
-                  className={BTN_MUTED}
-                >
+                <Button variant="muted" onClick={handleDisconnect}>
                   DISCONNECT
-                </button>
+                </Button>
               </div>
               <div className="flex items-center justify-between">
                 <div>
@@ -147,24 +137,23 @@ function SettingsInner() {
                     </p>
                   )}
                 </div>
-                <button
-                  type="button"
+                <Button
+                  variant="muted"
                   onClick={syncNow}
                   disabled={syncStatus === "syncing"}
-                  className={`${BTN_MUTED} disabled:opacity-40`}
                 >
                   SYNC NOW
-                </button>
+                </Button>
               </div>
             </>
           ) : (
-            <button
-              type="button"
+            <Button
+              variant="primary"
               onClick={handleConnect}
-              className="font-display text-background bg-accent border-2 border-accent w-full p-3 text-center cursor-pointer shadow-px-accent"
+              className="w-full text-center"
             >
               CONNECT GOOGLE DRIVE
-            </button>
+            </Button>
           )}
         </div>
       </section>
@@ -172,16 +161,20 @@ function SettingsInner() {
       <section className="mb-8">
         <p className={SECTION_LABEL}>{"// Data"}</p>
         <div className={PANEL}>
-          <button type="button" onClick={handleExport} className={BTN_BLOCK}>
+          <Button
+            variant="secondary"
+            onClick={handleExport}
+            className="w-full text-center"
+          >
             EXPORT 93_HABITS_LOG.MD
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="secondary"
             onClick={() => fileInputRef.current?.click()}
-            className={BTN_BLOCK}
+            className="w-full text-center"
           >
             IMPORT 93_HABITS_LOG.MD
-          </button>
+          </Button>
           <input
             ref={fileInputRef}
             type="file"

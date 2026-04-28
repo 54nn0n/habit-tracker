@@ -5,6 +5,7 @@ import type { MouseEvent } from "react";
 import { HABITS } from "@/lib/habits";
 import type { Severity } from "@/lib/habits";
 import { formatDayDetail } from "@/lib/date-utils";
+import Button from "@/components/button";
 
 const SEVERITY_LABELS: Record<Severity, string> = {
   0: "None",
@@ -41,14 +42,9 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
           <h2 className="font-display text-xs text-accent">
             {formatDayDetail(dateStr)}
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="font-body text-xs text-muted border border-border px-2.5 py-1 bg-transparent cursor-pointer"
-          >
+          <Button variant="muted" size="sm" onClick={onClose} aria-label="Close">
             CLOSE
-          </button>
+          </Button>
         </div>
 
         {allZero ? (
