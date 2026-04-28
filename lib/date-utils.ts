@@ -128,7 +128,8 @@ export function computeYearStats(
     totalDays++;
     if (severity > 0) loggedDays++;
     // Reducing: streak = consecutive clean days. Building: streak = consecutive logged days.
-    const isStreakDay = direction === "reducing" ? severity === 0 : severity > 0;
+    const isStreakDay =
+      direction === "reducing" ? severity === 0 : severity > 0;
     if (isStreakDay) {
       longestStreak = Math.max(longestStreak, ++streak);
     } else {

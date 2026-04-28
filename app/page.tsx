@@ -129,7 +129,9 @@ export default function TodayPage() {
             />
           ))}
           <Link href="/habits/new" className="self-start mt-1">
-            <Button variant="muted" size="sm">+ CREATE HABIT</Button>
+            <Button variant="muted" size="sm">
+              + CREATE HABIT
+            </Button>
           </Link>
         </div>
       )}

@@ -69,11 +69,7 @@ export function setWriteCallback(fn: () => void): void {
   onWriteCallback = fn;
 }
 
-export function setLog(
-  date: string,
-  habit: string,
-  severity: Severity,
-): void {
+export function setLog(date: string, habit: string, severity: Severity): void {
   const logs = readAll();
   logs[date] = { ...logs[date], [habit]: severity };
   writeAll(logs);

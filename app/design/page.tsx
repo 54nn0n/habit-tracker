@@ -22,10 +22,42 @@ import BottomNav from "@/components/bottom-nav";
 const YearCalendar = lazy(() => import("@/components/year-calendar"));
 
 const MOCK_HABITS: Habit[] = [
-  { key: "red_meat", label: "Red Meat", emoji: "🥩", color: "#ff4466", direction: "reducing", logType: "severity", order: 0 },
-  { key: "poultry", label: "Poultry", emoji: "🍗", color: "#ff8833", direction: "reducing", logType: "severity", order: 1 },
-  { key: "fish", label: "Fish", emoji: "🐟", color: "#00f5ff", direction: "reducing", logType: "severity", order: 2 },
-  { key: "alcohol", label: "Alcohol", emoji: "🍷", color: "#cc66ff", direction: "reducing", logType: "severity", order: 3 },
+  {
+    key: "red_meat",
+    label: "Red Meat",
+    emoji: "🥩",
+    color: "#ff4466",
+    direction: "reducing",
+    logType: "severity",
+    order: 0,
+  },
+  {
+    key: "poultry",
+    label: "Poultry",
+    emoji: "🍗",
+    color: "#ff8833",
+    direction: "reducing",
+    logType: "severity",
+    order: 1,
+  },
+  {
+    key: "fish",
+    label: "Fish",
+    emoji: "🐟",
+    color: "#00f5ff",
+    direction: "reducing",
+    logType: "severity",
+    order: 2,
+  },
+  {
+    key: "alcohol",
+    label: "Alcohol",
+    emoji: "🍷",
+    color: "#cc66ff",
+    direction: "reducing",
+    logType: "severity",
+    order: 3,
+  },
 ];
 
 const COLOR_TOKENS = [
@@ -337,13 +369,33 @@ export default function DesignPage() {
           {"// Form Controls"}
         </p>
         <div className="flex flex-col gap-4">
-          <TextInput label="Name" value="Running" onChange={handleNoOp} placeholder="e.g. Running" maxLength={32} />
-          <TextInput label="Emoji" value="🏃" onChange={handleNoOp} maxLength={4} inputClassName="w-16 text-xl text-center" />
+          <TextInput
+            label="Name"
+            value="Running"
+            onChange={handleNoOp}
+            placeholder="e.g. Running"
+            maxLength={32}
+          />
+          <TextInput
+            label="Emoji"
+            value="🏃"
+            onChange={handleNoOp}
+            maxLength={4}
+            inputClassName="w-16 text-xl text-center"
+          />
           <SegmentedToggle
             label="Direction"
             options={[
-              { value: "building", label: "BUILDING", description: "Streak = consecutive days with a log" },
-              { value: "reducing", label: "REDUCING", description: "Streak = consecutive days without logging" },
+              {
+                value: "building",
+                label: "BUILDING",
+                description: "Streak = consecutive days with a log",
+              },
+              {
+                value: "reducing",
+                label: "REDUCING",
+                description: "Streak = consecutive days without logging",
+              },
             ]}
             value="building"
             color="#00f5ff"
