@@ -21,14 +21,6 @@ export function formatDayDetail(dateStr: string): string {
   });
 }
 
-export function formatDisplayDate(dateStr: string): string {
-  return parseDateLocal(dateStr).toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
-}
-
 export function formatMonthYear(date: Date): string {
   return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }
@@ -59,41 +51,6 @@ export function getLastNDays(n: number): DayEntry[] {
       isToday: toLocalDateString(d) === todayStr,
     };
   });
-}
-
-export function buildYearGrid(): Array<Array<string | null>> {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  // Start from the Sunday of the week 52 weeks ago
-  const gridStart = new Date(today);
-  gridStart.setDate(today.getDate() - today.getDay() - 52 * 7);
-
-  const weeks: Array<Array<string | null>> = [];
-  const cursor = new Date(gridStart);
-
-  for (let w = 0; w < 53; w++) {
-    const week: Array<string | null> = [];
-    for (let d = 0; d < 7; d++) {
-      week.push(cursor <= today ? toLocalDateString(new Date(cursor)) : null);
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    weeks.push(week);
-  }
-
-  return weeks;
-}
-
-export function getMonthLabel(week: Array<string | null>): string | null {
-  for (const date of week) {
-    if (!date) continue;
-    if (parseDateLocal(date).getDate() === 1) {
-      return parseDateLocal(date).toLocaleDateString("en-US", {
-        month: "short",
-      });
-    }
-  }
-  return null;
 }
 
 export function hexToRgba(hex: string, alpha: number): string {

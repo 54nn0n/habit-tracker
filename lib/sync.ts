@@ -67,9 +67,3 @@ export async function loadFromDrive(): Promise<void> {
   }
 }
 
-export function getSyncStatus(): SyncStatus {
-  return status;
-}
-export function getLastSynced(): Date | null {
-  return lastSynced;
-}
