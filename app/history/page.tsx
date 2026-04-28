@@ -1,42 +1,37 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { HABITS } from "@/lib/habits";
-import type { HabitKey, Severity } from "@/lib/habits";
+import type { Severity } from "@/lib/habits";
+import { useHabits } from "@/lib/use-habits";
 import { useLogs } from "@/lib/use-logs";
 import YearCalendar from "@/components/year-calendar";
 import Last30Days from "@/components/last-30-days";
 import DayDetail from "@/components/day-detail";
 
-type PerHabitLogs = Record<HabitKey, Record<string, Severity>>;
-
-function derivePerHabitLogs(allLogs: ReturnType<typeof useLogs>): PerHabitLogs {
-  const result: PerHabitLogs = {
-    red_meat: {},
-    poultry: {},
-    fish: {},
-    alcohol: {},
-  };
-  for (const [date, dayLogs] of Object.entries(allLogs)) {
-    for (const habit of HABITS) {
-      const s = dayLogs[habit.key];
-      if (s !== undefined && s > 0) result[habit.key][date] = s;
-    }
-  }
-  return result;
-}
+type PerHabitLogs = Record<string, Record<string, Severity>>;
 
 export default function YearPage() {
   const allLogs = useLogs();
+  const habits = useHabits();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const perHabitLogs = useMemo(() => derivePerHabitLogs(allLogs), [allLogs]);
+  const perHabitLogs = useMemo((): PerHabitLogs => {
+    const result: PerHabitLogs = {};
+    for (const habit of habits) result[habit.key] = {};
+    for (const [date, dayLogs] of Object.entries(allLogs)) {
+      for (const habit of habits) {
+        const s = dayLogs[habit.key];
+        if (s !== undefined && s > 0) result[habit.key][date] = s;
+      }
+    }
+    return result;
+  }, [allLogs, habits]);
 
   const selectedDayLogs = useMemo((): Record<string, Severity> => {
     if (!selectedDate) return {};
     const day = allLogs[selectedDate] ?? {};
-    return Object.fromEntries(HABITS.map((h) => [h.key, day[h.key] ?? 0]));
-  }, [selectedDate, allLogs]);
+    return Object.fromEntries(habits.map((h) => [h.key, day[h.key] ?? 0]));
+  }, [selectedDate, allLogs, habits]);
 
   const handleDaySelect = useCallback(
     (date: string) => setSelectedDate(date),
@@ -58,11 +53,11 @@ export default function YearPage() {
       <div className="flex flex-col gap-4">
         <Last30Days allLogs={allLogs} />
 
-        {HABITS.map((habit) => (
+        {habits.map((habit) => (
           <YearCalendar
             key={habit.key}
             habit={habit}
-            logs={perHabitLogs[habit.key]}
+            logs={perHabitLogs[habit.key] ?? {}}
             onDaySelect={handleDaySelect}
           />
         ))}

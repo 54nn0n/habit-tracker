@@ -1,8 +1,8 @@
-import type { HabitKey, Severity } from "./habits";
+import type { Severity } from "./habits";
 
 const STORAGE_KEY = "habit-logs";
 
-type DayLogs = Partial<Record<HabitKey, Severity>>;
+type DayLogs = Record<string, Severity>;
 export type AllLogs = Record<string, DayLogs>;
 
 const EMPTY_LOGS: AllLogs = {};
@@ -51,7 +51,7 @@ export function getServerLogsSnapshot(): AllLogs {
   return EMPTY_LOGS;
 }
 
-export function getLog(date: string, habit: HabitKey): Severity {
+export function getLog(date: string, habit: string): Severity {
   return readAll()[date]?.[habit] ?? 0;
 }
 
@@ -71,7 +71,7 @@ export function setWriteCallback(fn: () => void): void {
 
 export function setLog(
   date: string,
-  habit: HabitKey,
+  habit: string,
   severity: Severity,
 ): void {
   const logs = readAll();

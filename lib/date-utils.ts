@@ -1,4 +1,4 @@
-import type { Severity } from "./habits";
+import type { Severity, HabitDirection } from "./habits";
 
 export function toLocalDateString(date: Date): string {
   const yyyy = date.getFullYear();
@@ -104,6 +104,7 @@ export function buildCalendarYear(year: number): MonthGrid[] {
 export function computeYearStats(
   logs: Record<string, Severity>,
   year: number,
+  direction: HabitDirection = "building",
 ): YearStats {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -123,10 +124,13 @@ export function computeYearStats(
 
   while (cursor <= endDate) {
     const dateStr = toLocalDateString(cursor);
+    const severity = logs[dateStr] ?? 0;
     totalDays++;
-    if ((logs[dateStr] ?? 0) > 0) {
+    if (severity > 0) loggedDays++;
+    // Reducing: streak = consecutive clean days. Building: streak = consecutive logged days.
+    const isStreakDay = direction === "reducing" ? severity === 0 : severity > 0;
+    if (isStreakDay) {
       longestStreak = Math.max(longestStreak, ++streak);
-      loggedDays++;
     } else {
       streak = 0;
     }

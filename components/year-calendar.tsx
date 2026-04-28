@@ -128,7 +128,10 @@ export default function YearCalendar({
   const year = useMemo(() => new Date().getFullYear(), []);
   const todayStr = useMemo(() => toLocalDateString(new Date()), []);
   const months = useMemo(() => buildCalendarYear(year), [year]);
-  const stats = useMemo(() => computeYearStats(logs, year), [logs, year]);
+  const stats = useMemo(
+    () => computeYearStats(logs, year, habit.direction),
+    [logs, year, habit.direction],
+  );
 
   const handleDaySelect = useCallback(
     (dateStr: string) => onDaySelect(dateStr),

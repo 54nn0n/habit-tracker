@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { HABITS } from "@/lib/habits";
 import type { AllLogs } from "@/lib/storage";
+import { useHabits } from "@/lib/use-habits";
 import { toLocalDateString, hexToRgba, severityColor } from "@/lib/date-utils";
 
 interface Last30DaysProps {
@@ -10,6 +10,8 @@ interface Last30DaysProps {
 }
 
 export default function Last30Days({ allLogs }: Last30DaysProps) {
+  const habits = useHabits();
+
   const days = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -26,7 +28,7 @@ export default function Last30Days({ allLogs }: Last30DaysProps) {
         LAST 30 DAYS
       </p>
       <div className="flex flex-col gap-2.5">
-        {HABITS.map((habit) => (
+        {habits.map((habit) => (
           <div key={habit.key} className="flex items-center gap-2">
             <span
               className="text-base leading-none shrink-0 w-5"

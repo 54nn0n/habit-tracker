@@ -2,8 +2,9 @@
 
 import { useCallback, useMemo } from "react";
 import Link from "next/link";
-import { HABITS } from "@/lib/habits";
-import type { Habit, HabitKey, Severity } from "@/lib/habits";
+import type { Habit, Severity } from "@/lib/habits";
+import { removeHabit } from "@/lib/habits";
+import { useHabits } from "@/lib/use-habits";
 import { setLog } from "@/lib/storage";
 import { useLogs } from "@/lib/use-logs";
 import {
@@ -13,22 +14,29 @@ import {
 } from "@/lib/date-utils";
 import type { HabitDayEntry } from "@/lib/date-utils";
 import HabitCard from "@/components/habit-card";
+import Button from "@/components/button";
 
 const DAYS_TO_SHOW = 5;
 
 interface HabitRowProps {
   habit: Habit;
   days: HabitDayEntry[];
-  onUpdate: (habitKey: HabitKey, dateStr: string, severity: Severity) => void;
+  onUpdate: (habitKey: string, dateStr: string, severity: Severity) => void;
+  onDelete: (key: string) => void;
 }
 
-function HabitRow({ habit, days, onUpdate }: HabitRowProps) {
+function HabitRow({ habit, days, onUpdate, onDelete }: HabitRowProps) {
   const handleChange = useCallback(
     (dateStr: string, s: Severity) => onUpdate(habit.key, dateStr, s),
     [habit.key, onUpdate],
   );
   return (
-    <HabitCard habit={habit} days={days} onSeverityChange={handleChange} />
+    <HabitCard
+      habit={habit}
+      days={days}
+      onSeverityChange={handleChange}
+      onDelete={onDelete}
+    />
   );
 }
 
@@ -37,23 +45,31 @@ export default function TodayPage() {
   const monthYear = useMemo(() => formatMonthYear(new Date()), []);
   const baseDays = useMemo(() => getLastNDays(DAYS_TO_SHOW), []);
   const allLogs = useLogs();
+  const habits = useHabits();
+
+  const sortedHabits = useMemo(
+    () => [...habits].sort((a, b) => a.order - b.order),
+    [habits],
+  );
 
   const habitRows = useMemo(
     () =>
-      HABITS.map((habit) => ({
+      sortedHabits.map((habit) => ({
         habit,
         days: baseDays.map((day) => ({
           ...day,
           severity: allLogs[day.dateStr]?.[habit.key] ?? 0,
         })),
       })),
-    [baseDays, allLogs],
+    [sortedHabits, baseDays, allLogs],
   );
 
   const handleUpdate = useCallback(
-    (key: HabitKey, dateStr: string, s: Severity) => setLog(dateStr, key, s),
+    (key: string, dateStr: string, s: Severity) => setLog(dateStr, key, s),
     [],
   );
+
+  const handleDelete = useCallback((key: string) => removeHabit(key), []);
 
   return (
     <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
@@ -92,16 +108,31 @@ export default function TodayPage() {
         </Link>
       </header>
 
-      <div className="flex flex-col gap-3">
-        {habitRows.map(({ habit, days }) => (
-          <HabitRow
-            key={habit.key}
-            habit={habit}
-            days={days}
-            onUpdate={handleUpdate}
-          />
-        ))}
-      </div>
+      {habitRows.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 gap-4">
+          <p className="font-body text-xs text-muted text-center">
+            No habits yet. Create one to get started.
+          </p>
+          <Link href="/habits/new">
+            <Button variant="primary">CREATE HABIT</Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {habitRows.map(({ habit, days }) => (
+            <HabitRow
+              key={habit.key}
+              habit={habit}
+              days={days}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+            />
+          ))}
+          <Link href="/habits/new" className="self-start mt-1">
+            <Button variant="muted" size="sm">+ CREATE HABIT</Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
