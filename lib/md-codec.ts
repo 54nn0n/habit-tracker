@@ -1,6 +1,6 @@
-import { HABITS } from './habits';
-import type { Severity } from './habits';
-import type { AllLogs } from './storage';
+import { HABITS } from "./habits";
+import type { Severity } from "./habits";
+import type { AllLogs } from "./storage";
 
 const HEADER = `# Habit Log
 
@@ -11,11 +11,12 @@ export function encodeLogs(logs: AllLogs): string {
   const rows = Object.entries(logs)
     .filter(([, day]) => HABITS.some((h) => (day[h.key] ?? 0) > 0))
     .sort(([a], [b]) => b.localeCompare(a))
-    .map(([date, day]) =>
-      `| ${date} | ${HABITS.map((h) => day[h.key] ?? 0).join(' | ')} |`,
+    .map(
+      ([date, day]) =>
+        `| ${date} | ${HABITS.map((h) => day[h.key] ?? 0).join(" | ")} |`,
     );
 
-  return rows.length > 0 ? `${HEADER}\n${rows.join('\n')}` : HEADER;
+  return rows.length > 0 ? `${HEADER}\n${rows.join("\n")}` : HEADER;
 }
 
 const ROW_RE =
@@ -27,7 +28,7 @@ function toSeverity(n: number): Severity {
 
 export function decodeLogs(md: string): AllLogs {
   const logs: AllLogs = {};
-  for (const line of md.split('\n')) {
+  for (const line of md.split("\n")) {
     const m = line.match(ROW_RE);
     if (!m) continue;
     const [, date, ...values] = m;

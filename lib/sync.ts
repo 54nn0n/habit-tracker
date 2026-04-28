@@ -1,8 +1,8 @@
-export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error';
+export type SyncStatus = "idle" | "syncing" | "synced" | "error";
 
 type Listener = (status: SyncStatus, lastSynced: Date | null) => void;
 
-let status: SyncStatus = 'idle';
+let status: SyncStatus = "idle";
 let lastSynced: Date | null = null;
 let timer: ReturnType<typeof setTimeout> | null = null;
 const listeners = new Set<Listener>();
@@ -23,34 +23,39 @@ export function scheduleSync(): void {
 }
 
 export async function syncNow(): Promise<void> {
-  const [{ isConnected }, { writeFile }, { encodeLogs }, { getAllLogs }] = await Promise.all([
-    import('./google-auth'),
-    import('./google-drive'),
-    import('./md-codec'),
-    import('./storage'),
-  ]);
+  const [{ isConnected }, { writeFile }, { encodeLogs }, { getAllLogs }] =
+    await Promise.all([
+      import("./google-auth"),
+      import("./google-drive"),
+      import("./md-codec"),
+      import("./storage"),
+    ]);
 
   if (!isConnected()) return;
-  status = 'syncing';
+  status = "syncing";
   emit();
   try {
     await writeFile(encodeLogs(getAllLogs()));
     lastSynced = new Date();
-    status = 'synced';
+    status = "synced";
   } catch {
-    status = 'error';
+    status = "error";
   }
   emit();
 }
 
 export async function loadFromDrive(): Promise<void> {
-  const [{ isConnected }, { readFile }, { decodeLogs }, { getAllLogs, setAllLogs }] =
-    await Promise.all([
-      import('./google-auth'),
-      import('./google-drive'),
-      import('./md-codec'),
-      import('./storage'),
-    ]);
+  const [
+    { isConnected },
+    { readFile },
+    { decodeLogs },
+    { getAllLogs, setAllLogs },
+  ] = await Promise.all([
+    import("./google-auth"),
+    import("./google-drive"),
+    import("./md-codec"),
+    import("./storage"),
+  ]);
 
   if (!isConnected()) return;
   try {
@@ -62,5 +67,9 @@ export async function loadFromDrive(): Promise<void> {
   }
 }
 
-export function getSyncStatus(): SyncStatus { return status; }
-export function getLastSynced(): Date | null { return lastSynced; }
+export function getSyncStatus(): SyncStatus {
+  return status;
+}
+export function getLastSynced(): Date | null {
+  return lastSynced;
+}

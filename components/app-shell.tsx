@@ -1,32 +1,57 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
-import { useSync } from "@/lib/use-sync";
 
 interface AppShellProps {
   children: ReactNode;
 }
 
+function subscribeOnlineStatus(callback: () => void) {
+  window.addEventListener("online", callback);
+  window.addEventListener("offline", callback);
+  return () => {
+    window.removeEventListener("online", callback);
+    window.removeEventListener("offline", callback);
+  };
+}
+
 function SyncMount() {
-  useSync();
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    if (mounted.current) return;
+    mounted.current = true;
+
+    let cleanupFn = () => {};
+
+    Promise.all([import("@/lib/sync"), import("@/lib/storage")]).then(
+      ([{ loadFromDrive, scheduleSync, syncNow }, { setWriteCallback }]) => {
+        setWriteCallback(scheduleSync);
+        cleanupFn = () => setWriteCallback(() => {});
+        loadFromDrive();
+
+        window.addEventListener("online", syncNow);
+        const prev = cleanupFn;
+        cleanupFn = () => {
+          prev();
+          window.removeEventListener("online", syncNow);
+        };
+      },
+    );
+
+    return () => cleanupFn();
+  }, []);
+
   return null;
 }
 
 export default function AppShell({ children }: AppShellProps) {
-  const [offline, setOffline] = useState(false);
-
-  useEffect(() => {
-    setOffline(!navigator.onLine);
-    const on = () => setOffline(false);
-    const off = () => setOffline(true);
-    window.addEventListener("online", on);
-    window.addEventListener("offline", off);
-    return () => {
-      window.removeEventListener("online", on);
-      window.removeEventListener("offline", off);
-    };
-  }, []);
+  const offline = useSyncExternalStore(
+    subscribeOnlineStatus,
+    () => !navigator.onLine,
+    () => false,
+  );
 
   return (
     <>
