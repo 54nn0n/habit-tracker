@@ -15,6 +15,7 @@ import BackButton from "@/components/back-button";
 import Button from "@/components/button";
 import TextInput from "@/components/text-input";
 import SegmentedToggle from "@/components/segmented-toggle";
+import ConfirmModal from "@/components/confirm-modal";
 import Last30Days from "@/components/last-30-days";
 import BottomNav from "@/components/bottom-nav";
 
@@ -401,6 +402,16 @@ export default function DesignPage() {
           dateStr={detailDate}
           logs={MOCK_DETAIL_LOGS}
           onClose={handleClose}
+        />
+      )}
+
+      {false && (
+        <ConfirmModal
+          title="Delete 🥩 Red Meat?"
+          message="All logged data for this habit will be kept but the habit will be removed."
+          confirmLabel="DELETE"
+          onConfirm={handleNoOp}
+          onCancel={handleNoOp}
         />
       )}
     </div>

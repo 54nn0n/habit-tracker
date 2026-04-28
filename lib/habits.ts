@@ -94,6 +94,12 @@ export function addHabit(habit: Omit<Habit, "order">): void {
   notifyHabits();
 }
 
+export function updateHabit(key: string, updates: Omit<Habit, "key" | "order">): void {
+  const habits = readHabits();
+  writeHabits(habits.map((h) => (h.key === key ? { ...h, ...updates } : h)));
+  notifyHabits();
+}
+
 export function removeHabit(key: string): void {
   writeHabits(readHabits().filter((h) => h.key !== key));
   notifyHabits();
