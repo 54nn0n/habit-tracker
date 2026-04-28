@@ -35,15 +35,14 @@ export default function Last30Days({ allLogs }: Last30DaysProps) {
             >
               {habit.emoji}
             </span>
-            <div className="flex-1 flex justify-between">
+            <div className="flex-1 flex gap-px">
               {days.map((dateStr) => {
                 const severity = allLogs[dateStr]?.[habit.key] ?? 0;
                 return (
                   <div
                     key={dateStr}
+                    className="flex-1 aspect-square"
                     style={{
-                      width: 7,
-                      height: 7,
                       backgroundColor:
                         severity > 0
                           ? severityColor(severity, habit.color)
