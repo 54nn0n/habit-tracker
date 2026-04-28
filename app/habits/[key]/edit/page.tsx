@@ -13,8 +13,16 @@ const DIRECTION_OPTIONS: [
   { value: HabitDirection; label: string; description: string },
   { value: HabitDirection; label: string; description: string },
 ] = [
-  { value: "building", label: "BUILDING", description: "Streak = consecutive days with a log" },
-  { value: "reducing", label: "REDUCING", description: "Streak = consecutive days without logging" },
+  {
+    value: "building",
+    label: "BUILDING",
+    description: "Streak = consecutive days with a log",
+  },
+  {
+    value: "reducing",
+    label: "REDUCING",
+    description: "Streak = consecutive days without logging",
+  },
 ];
 
 const LOG_TYPE_OPTIONS: [
@@ -22,7 +30,11 @@ const LOG_TYPE_OPTIONS: [
   { value: HabitLogType; label: string; description: string },
 ] = [
   { value: "boolean", label: "SIMPLE", description: "Done / not done" },
-  { value: "severity", label: "INTENSITY", description: "None / light / heavy" },
+  {
+    value: "severity",
+    label: "INTENSITY",
+    description: "None / light / heavy",
+  },
 ];
 
 export default function EditHabitPage() {
@@ -30,41 +42,63 @@ export default function EditHabitPage() {
   const params = useParams();
   const key = params.key as string;
 
-  const [label, setLabel] = useState("");
-  const [emoji, setEmoji] = useState("");
-  const [color, setColor] = useState(HABIT_COLORS[0]);
-  const [direction, setDirection] = useState<HabitDirection>("building");
-  const [logType, setLogType] = useState<HabitLogType>("boolean");
-  const [ready, setReady] = useState(false);
+  type FormState = {
+    label: string;
+    emoji: string;
+    color: string;
+    direction: HabitDirection;
+    logType: HabitLogType;
+  };
+
+  const [form, setForm] = useState<FormState | null>(() => {
+    if (typeof window === "undefined") return null;
+    const habit = getHabits().find((h) => h.key === key);
+    if (!habit) return null;
+    return {
+      label: habit.label,
+      emoji: habit.emoji,
+      color: habit.color,
+      direction: habit.direction,
+      logType: habit.logType,
+    };
+  });
 
   useEffect(() => {
-    const habit = getHabits().find((h) => h.key === key);
-    if (!habit) {
-      router.replace("/");
-      return;
-    }
-    setLabel(habit.label);
-    setEmoji(habit.emoji);
-    setColor(habit.color);
-    setDirection(habit.direction);
-    setLogType(habit.logType);
-    setReady(true);
-  }, [key, router]);
+    if (form === null) router.replace("/");
+  }, [form, router]);
 
   const handleSave = useCallback(() => {
-    const trimmed = label.trim();
+    if (!form) return;
+    const trimmed = form.label.trim();
     if (!trimmed) return;
-    updateHabit(key, { label: trimmed, emoji, color, direction, logType });
+    updateHabit(key, {
+      label: trimmed,
+      emoji: form.emoji,
+      color: form.color,
+      direction: form.direction,
+      logType: form.logType,
+    });
     router.push("/");
-  }, [key, label, emoji, color, direction, logType, router]);
+  }, [key, form, router]);
 
-  if (!ready) return null;
+  if (!form) return null;
+
+  const { label, emoji, color, direction, logType } = form;
+  const setLabel = (label: string) => setForm((f) => f && { ...f, label });
+  const setEmoji = (emoji: string) => setForm((f) => f && { ...f, emoji });
+  const setColor = (color: string) => setForm((f) => f && { ...f, color });
+  const setDirection = (direction: HabitDirection) =>
+    setForm((f) => f && { ...f, direction });
+  const setLogType = (logType: HabitLogType) =>
+    setForm((f) => f && { ...f, logType });
 
   return (
     <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
       <header className="mb-8">
         <BackButton href="/" />
-        <h1 className="font-display mt-4 text-[22px] text-accent">EDIT HABIT</h1>
+        <h1 className="font-display mt-4 text-[22px] text-accent">
+          EDIT HABIT
+        </h1>
       </header>
 
       <div className="flex flex-col gap-6">
@@ -86,7 +120,9 @@ export default function EditHabitPage() {
 
         {/* Color */}
         <div className="flex flex-col gap-2">
-          <p className="font-body text-xs text-muted uppercase tracking-[2px]">Color</p>
+          <p className="font-body text-xs text-muted uppercase tracking-[2px]">
+            Color
+          </p>
           <div className="flex gap-2 flex-wrap">
             {HABIT_COLORS.map((c) => (
               <button

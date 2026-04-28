@@ -13,8 +13,16 @@ const DIRECTION_OPTIONS: [
   { value: HabitDirection; label: string; description: string },
   { value: HabitDirection; label: string; description: string },
 ] = [
-  { value: "building", label: "BUILDING", description: "Streak = consecutive days with a log" },
-  { value: "reducing", label: "REDUCING", description: "Streak = consecutive days without logging" },
+  {
+    value: "building",
+    label: "BUILDING",
+    description: "Streak = consecutive days with a log",
+  },
+  {
+    value: "reducing",
+    label: "REDUCING",
+    description: "Streak = consecutive days without logging",
+  },
 ];
 
 const LOG_TYPE_OPTIONS: [
@@ -22,11 +30,19 @@ const LOG_TYPE_OPTIONS: [
   { value: HabitLogType; label: string; description: string },
 ] = [
   { value: "boolean", label: "SIMPLE", description: "Done / not done" },
-  { value: "severity", label: "INTENSITY", description: "None / light / heavy" },
+  {
+    value: "severity",
+    label: "INTENSITY",
+    description: "None / light / heavy",
+  },
 ];
 
 function toKey(label: string): string {
-  return label.trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_")
+    .replace(/[^a-z0-9_]/g, "");
 }
 
 export default function NewHabitPage() {
@@ -80,7 +96,9 @@ export default function NewHabitPage() {
 
         {/* Color */}
         <div className="flex flex-col gap-2">
-          <p className="font-body text-xs text-muted uppercase tracking-[2px]">Color</p>
+          <p className="font-body text-xs text-muted uppercase tracking-[2px]">
+            Color
+          </p>
           <div className="flex gap-2 flex-wrap">
             {HABIT_COLORS.map((c) => (
               <button
@@ -116,11 +134,7 @@ export default function NewHabitPage() {
           onChange={setLogType}
         />
 
-        <Button
-          variant="primary"
-          onClick={handleSubmit}
-          disabled={!canSubmit}
-        >
+        <Button variant="primary" onClick={handleSubmit} disabled={!canSubmit}>
           CREATE HABIT
         </Button>
       </div>

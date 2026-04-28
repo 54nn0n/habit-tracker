@@ -52,17 +52,20 @@ export default function HabitCard({
 }: HabitCardProps) {
   const router = useRouter();
   const [offsetX, setOffsetX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const [deleteConfirming, setDeleteConfirming] = useState(false);
   const startX = useRef<number | null>(null);
   const startOffsetX = useRef(0);
-  const isDragging = useRef(false);
 
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    startX.current = e.clientX;
-    startOffsetX.current = offsetX;
-    isDragging.current = false;
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-  }, [offsetX]);
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      startX.current = e.clientX;
+      startOffsetX.current = offsetX;
+      setIsDragging(false);
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    },
+    [offsetX],
+  );
 
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
@@ -70,7 +73,7 @@ export default function HabitCard({
       const dx = e.clientX - startX.current;
       if (Math.abs(dx) < 4) return;
       const target = startOffsetX.current + dx;
-      isDragging.current = true;
+      setIsDragging(true);
       if (target < 0 && onDelete) {
         setOffsetX(Math.max(target, -SWIPE_THRESHOLD - 20));
       } else if (target > 0) {
@@ -90,6 +93,7 @@ export default function HabitCard({
     } else {
       setOffsetX(0);
     }
+    setIsDragging(false);
     startX.current = null;
   }, [offsetX]);
 
@@ -146,7 +150,7 @@ export default function HabitCard({
             border: `2px solid ${habit.color}`,
             boxShadow: `var(--px-shadow) ${hexToRgba(habit.color, 0.5)}`,
             transform: `translateX(${offsetX}px)`,
-            transition: isDragging.current ? "none" : "transform 200ms ease",
+            transition: isDragging ? "none" : "transform 200ms ease",
             touchAction: "pan-y",
             userSelect: "none",
           }}

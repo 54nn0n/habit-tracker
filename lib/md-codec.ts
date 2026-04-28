@@ -45,8 +45,7 @@ export function decodeLogs(md: string): AllLogs {
     cols.forEach((col, i) => {
       const habit = habits.find(
         (h) =>
-          h.key === col ||
-          h.label.toLowerCase().replace(/\s+/g, "_") === col,
+          h.key === col || h.label.toLowerCase().replace(/\s+/g, "_") === col,
       );
       if (!habit) return;
       const s = toSeverity(Number(values[i]));
