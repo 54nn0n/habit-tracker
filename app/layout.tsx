@@ -41,9 +41,7 @@ export const metadata: Metadata = {
     title: "Habits",
   },
   icons: {
-    icon: [
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
+    icon: [{ url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" }],
     apple: "/icons/icon-180.png",
   },
 };

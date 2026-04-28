@@ -55,7 +55,7 @@ function MonthView({
   return (
     <div>
       <p
-        className={`font-body text-[9px] font-bold mb-1.5 ${isFutureMonth ? "text-muted" : "text-foreground"}`}
+        className={`font-body text-xs font-bold mb-1.5 ${isFutureMonth ? "text-muted" : "text-foreground"}`}
       >
         {MONTH_NAMES[month - 1]}
       </p>
@@ -100,7 +100,7 @@ function MonthView({
                 }}
               >
                 <span
-                  className={`font-body text-[7px] leading-none ${isToday ? "font-bold" : ""}`}
+                  className={`font-body text-xs leading-none ${isToday ? "font-bold" : ""}`}
                   style={{
                     color: isFuture
                       ? hexToRgba("#9999bb", 0.4)
@@ -140,10 +140,10 @@ export default function YearCalendar({
       <div className="flex items-start justify-between mb-4">
         <HabitHeader habit={habit} subtitle={String(year)} />
         <div className="text-right shrink-0 ml-2">
-          <p className="font-body text-[9px] text-foreground">
+          <p className="font-body text-xs text-foreground">
             {stats.loggedDays}/{stats.totalDays} · {stats.percentage}%
           </p>
-          <p className="font-body text-[9px] text-muted">
+          <p className="font-body text-xs text-muted">
             {stats.longestStreak}d streak
           </p>
         </div>

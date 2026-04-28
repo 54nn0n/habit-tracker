@@ -1,6 +1,6 @@
-import type { HabitKey, Severity } from './habits';
+import type { HabitKey, Severity } from "./habits";
 
-const STORAGE_KEY = 'habit-logs';
+const STORAGE_KEY = "habit-logs";
 
 type DayLogs = Partial<Record<HabitKey, Severity>>;
 export type AllLogs = Record<string, DayLogs>;
@@ -10,7 +10,7 @@ const listeners = new Set<() => void>();
 let snapshot: AllLogs = EMPTY_LOGS;
 
 function readAll(): AllLogs {
-  if (typeof window === 'undefined') return EMPTY_LOGS;
+  if (typeof window === "undefined") return EMPTY_LOGS;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? (JSON.parse(raw) as AllLogs) : EMPTY_LOGS;
@@ -20,7 +20,7 @@ function readAll(): AllLogs {
 }
 
 function writeAll(logs: AllLogs): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
 }
 
@@ -30,7 +30,7 @@ function notify(): void {
 }
 
 export function subscribeToLogs(listener: () => void): () => void {
-  if (listeners.size === 0 && typeof window !== 'undefined') {
+  if (listeners.size === 0 && typeof window !== "undefined") {
     snapshot = readAll();
   }
   listeners.add(listener);
@@ -38,7 +38,7 @@ export function subscribeToLogs(listener: () => void): () => void {
 }
 
 export function getLogsSnapshot(): AllLogs {
-  if (snapshot === EMPTY_LOGS && typeof window !== 'undefined') {
+  if (snapshot === EMPTY_LOGS && typeof window !== "undefined") {
     snapshot = readAll();
   }
   return snapshot;
@@ -66,7 +66,11 @@ export function setWriteCallback(fn: () => void): void {
   onWriteCallback = fn;
 }
 
-export function setLog(date: string, habit: HabitKey, severity: Severity): void {
+export function setLog(
+  date: string,
+  habit: HabitKey,
+  severity: Severity,
+): void {
   const logs = readAll();
   logs[date] = { ...logs[date], [habit]: severity };
   writeAll(logs);

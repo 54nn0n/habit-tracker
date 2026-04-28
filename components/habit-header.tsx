@@ -22,12 +22,12 @@ export default function HabitHeader({ habit, subtitle }: HabitHeaderProps) {
       </div>
       <div>
         <p
-          className="font-display leading-tight text-[9px]"
+          className="font-display leading-tight text-xs"
           style={{ color: habit.color }}
         >
           {habit.label}
         </p>
-        <p className="font-body text-[10px] text-muted">{subtitle}</p>
+        <p className="font-body text-xs text-muted">{subtitle}</p>
       </div>
     </div>
   );

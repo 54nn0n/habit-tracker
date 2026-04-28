@@ -12,6 +12,7 @@
   --color-red: #ff4466;
   --font-display: var(--font-syne);
   --font-body: var(--font-dm-sans);
+  --text-xxs: 10px;
 }
 
 :root {

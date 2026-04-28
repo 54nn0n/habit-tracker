@@ -1,10 +1,10 @@
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from "react";
 import {
   subscribeToLogs,
   getLogsSnapshot,
   getServerLogsSnapshot,
   type AllLogs,
-} from './storage';
+} from "./storage";
 
 export function useLogs(): AllLogs {
   return useSyncExternalStore(

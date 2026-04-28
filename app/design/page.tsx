@@ -9,11 +9,15 @@ import {
   formatMonthYear,
 } from "@/lib/date-utils";
 import type { HabitDayEntry } from "@/lib/date-utils";
+import type { AllLogs } from "@/lib/storage";
 import HabitCard from "@/components/habit-card";
 import DayDetail from "@/components/day-detail";
-import HabitHeader from "@/components/habit-header";
+import BackButton from "@/components/back-button";
+import Button from "@/components/button";
+import Last30Days from "@/components/last-30-days";
+import BottomNav from "@/components/bottom-nav";
 
-const HistoryGrid = lazy(() => import("@/components/history-grid"));
+const YearCalendar = lazy(() => import("@/components/year-calendar"));
 
 const COLOR_TOKENS = [
   { name: "--black / bg", value: "#0a0a0f" },
@@ -35,7 +39,6 @@ const SEVERITY_LABELS: Record<Severity, string> = {
   1: "Light",
   2: "Heavy",
 };
-
 const DOT_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.5, 2: 1 };
 const SEVERITIES: Severity[] = [0, 1, 2];
 
@@ -54,6 +57,20 @@ const MOCK_LOGS: Record<string, Severity> = {
   "2026-04-24": 2,
 };
 
+const MOCK_ALL_LOGS: AllLogs = {
+  "2026-01-08": { red_meat: 2 },
+  "2026-01-19": { poultry: 1 },
+  "2026-02-11": { fish: 2, alcohol: 1 },
+  "2026-02-22": { red_meat: 1 },
+  "2026-03-04": { alcohol: 2 },
+  "2026-03-17": { poultry: 2 },
+  "2026-03-28": { fish: 1 },
+  "2026-04-05": { red_meat: 2 },
+  "2026-04-14": { alcohol: 2 },
+  "2026-04-20": { poultry: 1 },
+  "2026-04-24": { red_meat: 2, fish: 1 },
+};
+
 const MOCK_DETAIL_LOGS: Record<string, Severity> = {
   red_meat: 2,
   poultry: 0,
@@ -65,12 +82,11 @@ export default function DesignPage() {
   const [detailDate, setDetailDate] = useState<string | null>(null);
   const todayStr = useMemo(() => toLocalDateString(new Date()), []);
   const monthYear = useMemo(() => formatMonthYear(new Date()), []);
-  const year = useMemo(() => String(new Date().getFullYear()), []);
 
   const mockDays = useMemo((): HabitDayEntry[] => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const severities: Severity[] = [1, 2, 0, 2, 0];
+    const severities = [1, 2, 0, 2, 0] as const;
     return Array.from({ length: 5 }, (_, i) => {
       const d = new Date(today);
       d.setDate(today.getDate() - (4 - i));
@@ -91,13 +107,13 @@ export default function DesignPage() {
   return (
     <div className="px-4 pt-10 pb-20 max-w-lg mx-auto w-full">
       <header className="mb-10">
-        <p className="font-body text-[9px] text-muted uppercase tracking-[3px]">
+        <p className="font-body text-xs text-muted uppercase tracking-[3px]">
           {monthYear}
         </p>
         <h1 className="font-display mt-2 leading-tight text-[22px] text-accent">
           PIXEL//OS
         </h1>
-        <p className="font-body text-[9px] text-muted mt-1">
+        <p className="font-body text-xs text-muted mt-1">
           8-BIT DESIGN SYSTEM — v1.2
         </p>
       </header>
@@ -119,8 +135,8 @@ export default function DesignPage() {
                 }}
               />
               <div>
-                <p className="font-body text-[9px] text-foreground">{name}</p>
-                <p className="font-body text-[9px] text-muted">{value}</p>
+                <p className="font-body text-xs text-foreground">{name}</p>
+                <p className="font-body text-xs text-muted">{value}</p>
               </div>
             </div>
           ))}
@@ -136,10 +152,10 @@ export default function DesignPage() {
                 }}
               />
               <div>
-                <p className="font-body text-[9px] text-foreground">
+                <p className="font-body text-xs text-foreground">
                   {h.emoji} {h.label}
                 </p>
-                <p className="font-body text-[9px] text-muted">{h.color}</p>
+                <p className="font-body text-xs text-muted">{h.color}</p>
               </div>
             </div>
           ))}
@@ -152,7 +168,7 @@ export default function DesignPage() {
         </p>
         <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-5">
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               Press Start 2P — display / headings
             </p>
             <div className="font-display flex flex-col gap-1.5">
@@ -165,7 +181,7 @@ export default function DesignPage() {
             </div>
           </div>
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               Silkscreen — data / body / UI
             </p>
             <div className="font-body flex flex-col gap-1.5">
@@ -175,11 +191,11 @@ export default function DesignPage() {
               <p className="text-[11px] text-foreground">
                 Small 11 — Player one
               </p>
-              <p className="text-[9px] text-muted">Caption 9 — © 1985</p>
+              <p className="text-xs text-muted">Caption 12 — © 1985</p>
             </div>
           </div>
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               VT323 — terminal / prose
             </p>
             <p
@@ -200,22 +216,11 @@ export default function DesignPage() {
 
       <section className="mb-10">
         <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
-          {"// Habit Headers"}
-        </p>
-        <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-3">
-          {HABITS.map((h) => (
-            <HabitHeader key={h.key} habit={h} subtitle={year} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mb-10">
-        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
           {"// Severity Scale"}
         </p>
         <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-4">
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               Pixel square — habit card input
             </p>
             <div className="flex justify-between">
@@ -247,7 +252,7 @@ export default function DesignPage() {
             </div>
           </div>
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               Heat cell — year / history grid
             </p>
             <div className="flex justify-between">
@@ -291,19 +296,59 @@ export default function DesignPage() {
 
       <section className="mb-10">
         <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
-          {"// History Grid"}
+          {"// Buttons"}
         </p>
-        <div className="grid grid-cols-2 gap-3">
-          <Suspense>
-            {HABITS.map((h) => (
-              <HistoryGrid
-                key={h.key}
-                habit={h}
-                logs={MOCK_LOGS}
-                onDaySelect={handleNoOp}
-              />
-            ))}
-          </Suspense>
+        <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-3">
+          <BackButton href="/" />
+          <Button variant="primary" className="w-full text-center">
+            CONNECT GOOGLE DRIVE
+          </Button>
+          <div className="flex gap-3">
+            <Button variant="secondary" className="flex-1 text-center">
+              EXPORT
+            </Button>
+            <Button variant="secondary" className="flex-1 text-center">
+              IMPORT
+            </Button>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="muted">DISCONNECT</Button>
+            <Button variant="muted" disabled>
+              SYNC NOW
+            </Button>
+            <Button variant="muted" size="sm">
+              CLOSE
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
+          {"// Last 30 Days"}
+        </p>
+        <Last30Days allLogs={MOCK_ALL_LOGS} />
+      </section>
+
+      <section className="mb-10">
+        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
+          {"// Year Calendar"}
+        </p>
+        <Suspense>
+          <YearCalendar
+            habit={HABITS[0]}
+            logs={MOCK_LOGS}
+            onDaySelect={handleNoOp}
+          />
+        </Suspense>
+      </section>
+
+      <section className="mb-10">
+        <p className="font-display text-[8px] text-accent tracking-[2px] uppercase mb-3">
+          {"// Bottom Nav"}
+        </p>
+        <div className="relative h-16 bg-surface border-2 border-border overflow-hidden">
+          <BottomNav />
         </div>
       </section>
 
@@ -316,8 +361,8 @@ export default function DesignPage() {
           onClick={() => setDetailDate(todayStr)}
           className="bg-surface border-2 border-border shadow-px p-4 w-full text-left cursor-pointer"
         >
-          <p className="font-display text-[9px] text-accent">OPEN DAY DETAIL</p>
-          <p className="font-body text-[10px] text-muted mt-1">
+          <p className="font-display text-xs text-accent">OPEN DAY DETAIL</p>
+          <p className="font-body text-xs text-muted mt-1">
             Bottom sheet — logged habits for a date
           </p>
         </button>

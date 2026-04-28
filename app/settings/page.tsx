@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense } from "react";
 
-const SettingsContent = lazy(() => import('./content'));
+const SettingsContent = lazy(() => import("./content"));
 
 export default function SettingsPage() {
   return (

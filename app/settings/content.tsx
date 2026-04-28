@@ -13,6 +13,8 @@ import { subscribeSyncStatus, syncNow } from "@/lib/sync";
 import type { SyncStatus } from "@/lib/sync";
 import { encodeLogs, decodeLogs } from "@/lib/md-codec";
 import { getAllLogs, setAllLogs } from "@/lib/storage";
+import BackButton from "@/components/back-button";
+import Button from "@/components/button";
 
 const VERSION = "0.2.0";
 
@@ -34,11 +36,6 @@ const SECTION_LABEL =
   "font-display text-[8px] text-accent tracking-[2px] uppercase mb-2";
 const PANEL =
   "bg-surface border-2 border-border p-4 flex flex-col gap-3 shadow-px";
-const BTN_GHOST =
-  "font-body text-[10px] text-accent border-2 border-accent px-3.5 py-2 bg-transparent cursor-pointer tracking-[0.5px] shadow-px-accent";
-const BTN_BLOCK = `${BTN_GHOST} w-full p-3 text-center`;
-const BTN_MUTED =
-  "font-body text-[10px] text-muted border border-border px-3 py-1.5 bg-transparent cursor-pointer";
 
 function SettingsInner() {
   const searchParams = useSearchParams();
@@ -96,7 +93,8 @@ function SettingsInner() {
   return (
     <div className="px-4 pt-10 pb-20 max-w-lg mx-auto w-full">
       <header className="mb-8">
-        <p className="font-body text-[9px] text-muted uppercase tracking-[3px]">
+        <BackButton href="/" />
+        <p className="font-body text-xs text-muted uppercase tracking-[3px]">
           App
         </p>
         <h1 className="font-display mt-2 leading-tight text-[22px] text-accent">
@@ -108,7 +106,7 @@ function SettingsInner() {
         <p className={SECTION_LABEL}>{"// Google Drive"}</p>
         <div className={PANEL}>
           {authError && (
-            <p className="font-body text-[10px] text-red">
+            <p className="font-body text-xs text-red">
               ✕ Connection failed. Please try again.
             </p>
           )}
@@ -119,27 +117,21 @@ function SettingsInner() {
                   <p className="font-body text-[11px] text-green">
                     ▶ CONNECTED
                   </p>
-                  <p className="font-body text-[9px] text-muted mt-0.5">
-                    {email}
-                  </p>
+                  <p className="font-body text-xs text-muted mt-0.5">{email}</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleDisconnect}
-                  className={BTN_MUTED}
-                >
+                <Button variant="muted" onClick={handleDisconnect}>
                   DISCONNECT
-                </button>
+                </Button>
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p
-                    className={`font-body text-[10px] ${STATUS_CLASS[syncStatus]}`}
+                    className={`font-body text-xs ${STATUS_CLASS[syncStatus]}`}
                   >
                     {STATUS_LABEL[syncStatus]}
                   </p>
                   {lastSynced && (
-                    <p className="font-body text-[9px] text-muted mt-0.5">
+                    <p className="font-body text-xs text-muted mt-0.5">
                       {lastSynced.toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -147,24 +139,23 @@ function SettingsInner() {
                     </p>
                   )}
                 </div>
-                <button
-                  type="button"
+                <Button
+                  variant="muted"
                   onClick={syncNow}
                   disabled={syncStatus === "syncing"}
-                  className={`${BTN_MUTED} disabled:opacity-40`}
                 >
                   SYNC NOW
-                </button>
+                </Button>
               </div>
             </>
           ) : (
-            <button
-              type="button"
+            <Button
+              variant="primary"
               onClick={handleConnect}
-              className="font-display text-[9px] text-background bg-accent border-2 border-accent w-full p-3 text-center cursor-pointer shadow-px-accent"
+              className="w-full text-center"
             >
               CONNECT GOOGLE DRIVE
-            </button>
+            </Button>
           )}
         </div>
       </section>
@@ -172,16 +163,20 @@ function SettingsInner() {
       <section className="mb-8">
         <p className={SECTION_LABEL}>{"// Data"}</p>
         <div className={PANEL}>
-          <button type="button" onClick={handleExport} className={BTN_BLOCK}>
+          <Button
+            variant="secondary"
+            onClick={handleExport}
+            className="w-full text-center"
+          >
             EXPORT 93_HABITS_LOG.MD
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="secondary"
             onClick={() => fileInputRef.current?.click()}
-            className={BTN_BLOCK}
+            className="w-full text-center"
           >
             IMPORT 93_HABITS_LOG.MD
-          </button>
+          </Button>
           <input
             ref={fileInputRef}
             type="file"
@@ -190,7 +185,7 @@ function SettingsInner() {
             onChange={handleImport}
           />
           {importError && (
-            <p className="font-body text-[10px] text-red">✕ {importError}</p>
+            <p className="font-body text-xs text-red">✕ {importError}</p>
           )}
         </div>
       </section>
@@ -198,8 +193,8 @@ function SettingsInner() {
       <section>
         <p className={SECTION_LABEL}>{"// About"}</p>
         <div className={`${PANEL} gap-1`}>
-          <p className="font-display text-[9px] text-foreground">93 HABITS</p>
-          <p className="font-body text-[10px] text-muted">v{VERSION}</p>
+          <p className="font-display text-xs text-foreground">93 HABITS</p>
+          <p className="font-body text-xs text-muted">v{VERSION}</p>
         </div>
       </section>
     </div>
