@@ -59,7 +59,7 @@ export default function TodayPage() {
     <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
       <header className="mb-6 flex items-start justify-between">
         <div>
-          <p className="font-body text-[9px] text-muted uppercase tracking-[3px]">
+          <p className="font-body text-xs text-muted uppercase tracking-[3px]">
             {monthYear}
           </p>
           <h1 className="font-display mt-2 leading-tight text-[28px] text-accent">

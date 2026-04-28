@@ -53,12 +53,12 @@ export default function DotInput({
       className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
       <span
-        className={`font-body text-[9px] ${isToday ? "text-accent" : "text-muted"}`}
+        className={`font-body text-xs ${isToday ? "text-accent" : "text-muted"}`}
       >
         {dayLabel}
       </span>
       <span
-        className={`font-body text-[9px] leading-none ${isToday ? "font-bold text-foreground" : "text-muted"}`}
+        className={`font-body text-xs leading-none ${isToday ? "font-bold text-foreground" : "text-muted"}`}
       >
         {dayNumber}
       </span>

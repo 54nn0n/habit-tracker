@@ -91,13 +91,13 @@ export default function DesignPage() {
   return (
     <div className="px-4 pt-10 pb-20 max-w-lg mx-auto w-full">
       <header className="mb-10">
-        <p className="font-body text-[9px] text-muted uppercase tracking-[3px]">
+        <p className="font-body text-xs text-muted uppercase tracking-[3px]">
           {monthYear}
         </p>
         <h1 className="font-display mt-2 leading-tight text-[22px] text-accent">
           PIXEL//OS
         </h1>
-        <p className="font-body text-[9px] text-muted mt-1">
+        <p className="font-body text-xs text-muted mt-1">
           8-BIT DESIGN SYSTEM — v1.2
         </p>
       </header>
@@ -119,8 +119,8 @@ export default function DesignPage() {
                 }}
               />
               <div>
-                <p className="font-body text-[9px] text-foreground">{name}</p>
-                <p className="font-body text-[9px] text-muted">{value}</p>
+                <p className="font-body text-xs text-foreground">{name}</p>
+                <p className="font-body text-xs text-muted">{value}</p>
               </div>
             </div>
           ))}
@@ -136,10 +136,10 @@ export default function DesignPage() {
                 }}
               />
               <div>
-                <p className="font-body text-[9px] text-foreground">
+                <p className="font-body text-xs text-foreground">
                   {h.emoji} {h.label}
                 </p>
-                <p className="font-body text-[9px] text-muted">{h.color}</p>
+                <p className="font-body text-xs text-muted">{h.color}</p>
               </div>
             </div>
           ))}
@@ -152,7 +152,7 @@ export default function DesignPage() {
         </p>
         <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-5">
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               Press Start 2P — display / headings
             </p>
             <div className="font-display flex flex-col gap-1.5">
@@ -165,7 +165,7 @@ export default function DesignPage() {
             </div>
           </div>
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               Silkscreen — data / body / UI
             </p>
             <div className="font-body flex flex-col gap-1.5">
@@ -175,11 +175,11 @@ export default function DesignPage() {
               <p className="text-[11px] text-foreground">
                 Small 11 — Player one
               </p>
-              <p className="text-[9px] text-muted">Caption 9 — © 1985</p>
+              <p className="text-xs text-muted">Caption 9 — © 1985</p>
             </div>
           </div>
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               VT323 — terminal / prose
             </p>
             <p
@@ -215,7 +215,7 @@ export default function DesignPage() {
         </p>
         <div className="bg-surface border-2 border-border shadow-px p-4 flex flex-col gap-4">
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               Pixel square — habit card input
             </p>
             <div className="flex justify-between">
@@ -247,7 +247,7 @@ export default function DesignPage() {
             </div>
           </div>
           <div>
-            <p className="font-body text-[9px] text-muted mb-2.5">
+            <p className="font-body text-xs text-muted mb-2.5">
               Heat cell — year / history grid
             </p>
             <div className="flex justify-between">
@@ -316,7 +316,7 @@ export default function DesignPage() {
           onClick={() => setDetailDate(todayStr)}
           className="bg-surface border-2 border-border shadow-px p-4 w-full text-left cursor-pointer"
         >
-          <p className="font-display text-[9px] text-accent">OPEN DAY DETAIL</p>
+          <p className="font-display text-xs text-accent">OPEN DAY DETAIL</p>
           <p className="font-body text-[10px] text-muted mt-1">
             Bottom sheet — logged habits for a date
           </p>

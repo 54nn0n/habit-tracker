@@ -96,7 +96,7 @@ function SettingsInner() {
   return (
     <div className="px-4 pt-10 pb-20 max-w-lg mx-auto w-full">
       <header className="mb-8">
-        <p className="font-body text-[9px] text-muted uppercase tracking-[3px]">
+        <p className="font-body text-xs text-muted uppercase tracking-[3px]">
           App
         </p>
         <h1 className="font-display mt-2 leading-tight text-[22px] text-accent">
@@ -119,7 +119,7 @@ function SettingsInner() {
                   <p className="font-body text-[11px] text-green">
                     ▶ CONNECTED
                   </p>
-                  <p className="font-body text-[9px] text-muted mt-0.5">
+                  <p className="font-body text-xs text-muted mt-0.5">
                     {email}
                   </p>
                 </div>
@@ -139,7 +139,7 @@ function SettingsInner() {
                     {STATUS_LABEL[syncStatus]}
                   </p>
                   {lastSynced && (
-                    <p className="font-body text-[9px] text-muted mt-0.5">
+                    <p className="font-body text-xs text-muted mt-0.5">
                       {lastSynced.toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -161,7 +161,7 @@ function SettingsInner() {
             <button
               type="button"
               onClick={handleConnect}
-              className="font-display text-[9px] text-background bg-accent border-2 border-accent w-full p-3 text-center cursor-pointer shadow-px-accent"
+              className="font-display text-xs text-background bg-accent border-2 border-accent w-full p-3 text-center cursor-pointer shadow-px-accent"
             >
               CONNECT GOOGLE DRIVE
             </button>
@@ -198,7 +198,7 @@ function SettingsInner() {
       <section>
         <p className={SECTION_LABEL}>{"// About"}</p>
         <div className={`${PANEL} gap-1`}>
-          <p className="font-display text-[9px] text-foreground">93 HABITS</p>
+          <p className="font-display text-xs text-foreground">93 HABITS</p>
           <p className="font-body text-[10px] text-muted">v{VERSION}</p>
         </div>
       </section>

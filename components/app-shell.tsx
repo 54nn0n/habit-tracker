@@ -57,7 +57,7 @@ export default function AppShell({ children }: AppShellProps) {
     <>
       <SyncMount />
       {offline && (
-        <div className="sticky top-0 z-50 w-full flex items-center justify-center py-2 px-4 bg-yellow text-background font-body text-[9px] tracking-[1px]">
+        <div className="sticky top-0 z-50 w-full flex items-center justify-center py-2 px-4 bg-yellow text-background font-body text-xs tracking-[1px]">
           NO INTERNET — CHANGES SAVED LOCALLY
         </div>
       )}
