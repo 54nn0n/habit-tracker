@@ -2,8 +2,8 @@ import type { Severity } from "./habits";
 
 const STORAGE_KEY = "habit-logs";
 
-type DayLogs = Record<string, Severity>;
-export type AllLogs = Record<string, DayLogs>;
+export type DayLogs = Partial<Record<string, Severity>>;
+export type AllLogs = Partial<Record<string, DayLogs>>;
 
 const EMPTY_LOGS: AllLogs = {};
 const listeners = new Set<() => void>();
@@ -81,7 +81,7 @@ export function setLog(
       if (Object.keys(logs[date]).length === 0) delete logs[date];
     }
   } else {
-    logs[date] = { ...logs[date], [habit]: severity };
+    logs[date] = { ...(logs[date] ?? {}), [habit]: severity };
   }
   writeAll(logs);
   notify();
