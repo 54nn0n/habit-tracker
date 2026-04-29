@@ -29,7 +29,7 @@ const LOG_TYPE_OPTIONS: [
   { value: HabitLogType; label: string; description: string },
   { value: HabitLogType; label: string; description: string },
 ] = [
-  { value: "boolean", label: "SIMPLE", description: "Done / not done" },
+  { value: "boolean", label: "BOOLEAN", description: "Done / not done" },
   {
     value: "severity",
     label: "INTENSITY",

@@ -15,6 +15,7 @@ const SEVERITY_ALPHAS: Record<Severity, number> = {
 function squareStyle(
   severity: Severity | undefined,
   color: string,
+  logType: HabitLogType,
 ): CSSProperties {
   if (severity === undefined) {
     return { border: `2px dashed ${hexToRgba(color, 0.35)}` };
@@ -22,10 +23,11 @@ function squareStyle(
   if (severity === 0) {
     return { border: `2px solid ${hexToRgba(color, 0.35)}` };
   }
+  const isFull = logType === "boolean" || severity === 2;
   return {
-    backgroundColor: hexToRgba(color, SEVERITY_ALPHAS[severity]),
+    backgroundColor: hexToRgba(color, isFull ? 1 : SEVERITY_ALPHAS[severity]),
     border: `2px solid ${color}`,
-    boxShadow: severity === 2 ? `0 0 6px ${hexToRgba(color, 0.7)}` : undefined,
+    boxShadow: isFull ? `0 0 6px ${hexToRgba(color, 0.7)}` : undefined,
   };
 }
 
@@ -72,7 +74,7 @@ export default function DotInput({
       </span>
       <span
         className="w-8 h-8 flex-shrink-0 transition-all duration-150"
-        style={squareStyle(severity, color)}
+        style={squareStyle(severity, color, logType)}
       />
     </button>
   );
