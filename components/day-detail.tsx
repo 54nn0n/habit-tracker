@@ -15,7 +15,7 @@ const SEVERITY_LABELS: Record<Severity, string> = {
 
 interface DayDetailProps {
   dateStr: string;
-  logs: Record<string, Severity>;
+  logs: Partial<Record<string, Severity>>;
   onClose: () => void;
 }
 
@@ -29,7 +29,7 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
     [onClose],
   );
 
-  const nothingLogged = habits.every((h) => !(h.key in logs));
+  const nothingLogged = habits.every((h) => logs[h.key] === undefined);
 
   return (
     <div
@@ -59,8 +59,8 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
         ) : (
           <div className="flex flex-col gap-4">
             {habits.map((habit) => {
-              if (!(habit.key in logs)) return null;
               const severity = logs[habit.key];
+              if (severity === undefined) return null;
               return (
                 <div
                   key={habit.key}

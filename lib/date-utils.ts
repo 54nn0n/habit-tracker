@@ -102,7 +102,7 @@ export function buildCalendarYear(year: number): MonthGrid[] {
 }
 
 export function computeYearStats(
-  logs: Record<string, Severity>,
+  logs: Partial<Record<string, Severity>>,
   year: number,
   direction: HabitDirection = "building",
 ): YearStats {

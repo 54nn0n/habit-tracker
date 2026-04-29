@@ -29,13 +29,13 @@ const MONTH_NAMES = [
 
 interface YearCalendarProps {
   habit: Habit;
-  logs: Record<string, Severity>;
+  logs: Partial<Record<string, Severity>>;
   onDaySelect: (dateStr: string) => void;
 }
 
 interface MonthViewProps {
   grid: MonthGrid;
-  logs: Record<string, Severity>;
+  logs: Partial<Record<string, Severity>>;
   color: string;
   logType: HabitLogType;
   todayStr: string;

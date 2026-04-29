@@ -8,7 +8,7 @@ import YearCalendar from "@/components/year-calendar";
 import Last30Days from "@/components/last-30-days";
 import DayDetail from "@/components/day-detail";
 
-type PerHabitLogs = Record<string, Record<string, Severity>>;
+type PerHabitLogs = Record<string, Partial<Record<string, Severity>>>;
 
 export default function YearPage() {
   const allLogs = useLogs();
@@ -27,7 +27,7 @@ export default function YearPage() {
     return result;
   }, [allLogs, habits]);
 
-  const selectedDayLogs = useMemo((): Record<string, Severity> => {
+  const selectedDayLogs = useMemo((): Partial<Record<string, Severity>> => {
     if (!selectedDate) return {};
     return allLogs[selectedDate] ?? {};
   }, [selectedDate, allLogs]);
