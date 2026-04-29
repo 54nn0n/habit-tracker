@@ -2,8 +2,8 @@ import type { Severity } from "./habits";
 
 const STORAGE_KEY = "habit-logs";
 
-type DayLogs = Record<string, Severity>;
-export type AllLogs = Record<string, DayLogs>;
+export type DayLogs = Partial<Record<string, Severity>>;
+export type AllLogs = Partial<Record<string, DayLogs>>;
 
 const EMPTY_LOGS: AllLogs = {};
 const listeners = new Set<() => void>();
@@ -51,8 +51,8 @@ export function getServerLogsSnapshot(): AllLogs {
   return EMPTY_LOGS;
 }
 
-export function getLog(date: string, habit: string): Severity {
-  return readAll()[date]?.[habit] ?? 0;
+export function getLog(date: string, habit: string): Severity | undefined {
+  return readAll()[date]?.[habit];
 }
 
 export function getAllLogs(): AllLogs {
@@ -72,10 +72,22 @@ export function setWriteCallback(fn: () => void): void {
 export function setLog(
   date: string,
   habit: string,
-  severity: Severity,
+  severity: Severity | undefined,
 ): void {
-  const logs = readAll();
-  logs[date] = { ...logs[date], [habit]: severity };
+  const logs = { ...readAll() };
+  if (severity === undefined) {
+    if (logs[date]) {
+      const day = { ...logs[date] };
+      delete day[habit];
+      if (Object.keys(day).length === 0) {
+        delete logs[date];
+      } else {
+        logs[date] = day;
+      }
+    }
+  } else {
+    logs[date] = { ...(logs[date] ?? {}), [habit]: severity };
+  }
   writeAll(logs);
   notify();
   onWriteCallback?.();

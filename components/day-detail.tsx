@@ -2,20 +2,22 @@
 
 import { useCallback } from "react";
 import type { MouseEvent } from "react";
-import type { Severity } from "@/lib/habits";
+import type { Severity, HabitLogType } from "@/lib/habits";
 import { useHabits } from "@/lib/use-habits";
 import { formatDayDetail } from "@/lib/date-utils";
 import Button from "@/components/button";
 
-const SEVERITY_LABELS: Record<Severity, string> = {
-  0: "None",
-  1: "Light",
-  2: "Heavy",
+const SEVERITY_LABELS: Record<
+  HabitLogType,
+  Partial<Record<Severity, string>>
+> = {
+  boolean: { 0: "None", 1: "Done" },
+  severity: { 0: "None", 1: "Light", 2: "Heavy" },
 };
 
 interface DayDetailProps {
   dateStr: string;
-  logs: Record<string, Severity>;
+  logs: Partial<Record<string, Severity>>;
   onClose: () => void;
 }
 
@@ -29,7 +31,7 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
     [onClose],
   );
 
-  const allZero = habits.every((h) => (logs[h.key] ?? 0) === 0);
+  const nothingLogged = habits.every((h) => logs[h.key] === undefined);
 
   return (
     <div
@@ -54,13 +56,13 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
           </Button>
         </div>
 
-        {allZero ? (
+        {nothingLogged ? (
           <p className="font-body text-[11px] text-muted">Nothing logged</p>
         ) : (
           <div className="flex flex-col gap-4">
             {habits.map((habit) => {
-              const severity = logs[habit.key] ?? 0;
-              if (severity === 0) return null;
+              const severity = logs[habit.key];
+              if (severity === undefined) return null;
               return (
                 <div
                   key={habit.key}
@@ -79,13 +81,21 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
                     </span>
                   </div>
                   <span
-                    className="font-display text-[8px] text-background px-2 py-1"
-                    style={{
-                      backgroundColor: habit.color,
-                      border: `1px solid ${habit.color}`,
-                    }}
+                    className="font-display text-[8px] px-2 py-1"
+                    style={
+                      severity === 0
+                        ? {
+                            color: habit.color,
+                            border: `1px solid ${habit.color}`,
+                          }
+                        : {
+                            backgroundColor: habit.color,
+                            color: "var(--color-background)",
+                            border: `1px solid ${habit.color}`,
+                          }
+                    }
                   >
-                    {SEVERITY_LABELS[severity]}
+                    {SEVERITY_LABELS[habit.logType][severity]}
                   </span>
                 </div>
               );

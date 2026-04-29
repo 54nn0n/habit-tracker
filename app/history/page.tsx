@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import type { Severity } from "@/lib/habits";
 import { useHabits } from "@/lib/use-habits";
 import { useLogs } from "@/lib/use-logs";
+import type { DayLogs } from "@/lib/storage";
 import YearCalendar from "@/components/year-calendar";
 import Last30Days from "@/components/last-30-days";
 import DayDetail from "@/components/day-detail";
 
-type PerHabitLogs = Record<string, Record<string, Severity>>;
+type PerHabitLogs = Record<string, DayLogs>;
 
 export default function YearPage() {
   const allLogs = useLogs();
@@ -19,19 +19,19 @@ export default function YearPage() {
     const result: PerHabitLogs = {};
     for (const habit of habits) result[habit.key] = {};
     for (const [date, dayLogs] of Object.entries(allLogs)) {
+      if (!dayLogs) continue;
       for (const habit of habits) {
         const s = dayLogs[habit.key];
-        if (s !== undefined && s > 0) result[habit.key][date] = s;
+        if (s !== undefined) result[habit.key][date] = s;
       }
     }
     return result;
   }, [allLogs, habits]);
 
-  const selectedDayLogs = useMemo((): Record<string, Severity> => {
+  const selectedDayLogs = useMemo((): DayLogs => {
     if (!selectedDate) return {};
-    const day = allLogs[selectedDate] ?? {};
-    return Object.fromEntries(habits.map((h) => [h.key, day[h.key] ?? 0]));
-  }, [selectedDate, allLogs, habits]);
+    return allLogs[selectedDate] ?? {};
+  }, [selectedDate, allLogs]);
 
   const handleDaySelect = useCallback(
     (date: string) => setSelectedDate(date),

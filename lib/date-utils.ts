@@ -33,7 +33,7 @@ export interface DayEntry {
 }
 
 export interface HabitDayEntry extends DayEntry {
-  severity: Severity;
+  severity: Severity | undefined;
 }
 
 export function getLastNDays(n: number): DayEntry[] {
@@ -60,10 +60,9 @@ export function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-const SEVERITY_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.5, 2: 1 };
+const SEVERITY_ALPHAS: Record<1 | 2, number> = { 1: 0.5, 2: 1 };
 
-export function severityColor(severity: Severity, habitColor: string): string {
-  if (severity === 0) return "transparent";
+export function severityColor(severity: 1 | 2, habitColor: string): string {
   return hexToRgba(habitColor, SEVERITY_ALPHAS[severity]);
 }
 
@@ -102,7 +101,7 @@ export function buildCalendarYear(year: number): MonthGrid[] {
 }
 
 export function computeYearStats(
-  logs: Record<string, Severity>,
+  logs: Partial<Record<string, Severity>>,
   year: number,
   direction: HabitDirection = "building",
 ): YearStats {
@@ -124,11 +123,15 @@ export function computeYearStats(
 
   while (cursor <= endDate) {
     const dateStr = toLocalDateString(cursor);
-    const severity = logs[dateStr] ?? 0;
+    // undefined = not tracked; 0 = explicitly none; >0 = logged something
+    const severity = logs[dateStr];
     totalDays++;
-    if (severity > 0) loggedDays++;
-    // Reducing: streak = consecutive clean days. Building: streak = consecutive logged days.
-    const isStreakDay = direction === "reducing" ? severity === 0 : severity > 0;
+    if (severity !== undefined && severity > 0) loggedDays++;
+    // Reducing: clean = no entry or explicit 0. Building: active = explicit entry > 0.
+    const isStreakDay =
+      direction === "reducing"
+        ? severity === undefined || severity === 0
+        : severity !== undefined && severity > 0;
     if (isStreakDay) {
       longestStreak = Math.max(longestStreak, ++streak);
     } else {

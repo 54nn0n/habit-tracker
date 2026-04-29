@@ -12,12 +12,19 @@ export interface Habit {
   order: number;
 }
 
-export const SEVERITY_CYCLE: Record<Severity, Severity> = { 0: 1, 1: 2, 2: 0 };
-export const BOOLEAN_CYCLE: Record<0 | 1, 0 | 1> = { 0: 1, 1: 0 };
-
-export function nextSeverity(current: Severity, logType: HabitLogType): Severity {
-  if (logType === "boolean") return current === 0 ? 1 : 0;
-  return SEVERITY_CYCLE[current];
+export function nextSeverity(
+  current: Severity | undefined,
+  logType: HabitLogType,
+): Severity | undefined {
+  if (logType === "boolean") {
+    if (current === undefined) return 0;
+    if (current === 0) return 1;
+    return undefined;
+  }
+  if (current === undefined) return 0;
+  if (current === 0) return 1;
+  if (current === 1) return 2;
+  return undefined;
 }
 
 export const HABIT_COLORS = [
@@ -32,10 +39,42 @@ export const HABIT_COLORS = [
 ];
 
 const DEFAULT_HABITS: Habit[] = [
-  { key: "red_meat", label: "Red Meat", emoji: "🥩", color: "#ff4466", direction: "reducing", logType: "severity", order: 0 },
-  { key: "poultry", label: "Poultry", emoji: "🍗", color: "#ff8833", direction: "reducing", logType: "severity", order: 1 },
-  { key: "fish", label: "Fish", emoji: "🐟", color: "#00f5ff", direction: "reducing", logType: "severity", order: 2 },
-  { key: "alcohol", label: "Alcohol", emoji: "🍷", color: "#cc66ff", direction: "reducing", logType: "severity", order: 3 },
+  {
+    key: "red_meat",
+    label: "Red Meat",
+    emoji: "🥩",
+    color: "#ff4466",
+    direction: "reducing",
+    logType: "severity",
+    order: 0,
+  },
+  {
+    key: "poultry",
+    label: "Poultry",
+    emoji: "🍗",
+    color: "#ff8833",
+    direction: "reducing",
+    logType: "severity",
+    order: 1,
+  },
+  {
+    key: "fish",
+    label: "Fish",
+    emoji: "🐟",
+    color: "#00f5ff",
+    direction: "reducing",
+    logType: "severity",
+    order: 2,
+  },
+  {
+    key: "alcohol",
+    label: "Alcohol",
+    emoji: "🍷",
+    color: "#cc66ff",
+    direction: "reducing",
+    logType: "severity",
+    order: 3,
+  },
 ];
 
 const HABITS_KEY = "habit-definitions";
@@ -79,8 +118,9 @@ export function getHabitsSnapshot(): Habit[] {
   return snapshot;
 }
 
+const EMPTY_HABITS: Habit[] = [];
 export function getServerHabitsSnapshot(): Habit[] {
-  return [];
+  return EMPTY_HABITS;
 }
 
 export function getHabits(): Habit[] {
@@ -89,12 +129,16 @@ export function getHabits(): Habit[] {
 
 export function addHabit(habit: Omit<Habit, "order">): void {
   const habits = readHabits();
-  const order = habits.length > 0 ? Math.max(...habits.map((h) => h.order)) + 1 : 0;
+  const order =
+    habits.length > 0 ? Math.max(...habits.map((h) => h.order)) + 1 : 0;
   writeHabits([...habits, { ...habit, order }]);
   notifyHabits();
 }
 
-export function updateHabit(key: string, updates: Omit<Habit, "key" | "order">): void {
+export function updateHabit(
+  key: string,
+  updates: Omit<Habit, "key" | "order">,
+): void {
   const habits = readHabits();
   writeHabits(habits.map((h) => (h.key === key ? { ...h, ...updates } : h)));
   notifyHabits();
@@ -108,7 +152,9 @@ export function removeHabit(key: string): void {
 export function reorderHabits(keys: string[]): void {
   const habits = readHabits();
   const byKey = Object.fromEntries(habits.map((h) => [h.key, h]));
-  const reordered = keys.map((k, i) => ({ ...byKey[k], order: i })).filter(Boolean);
+  const reordered = keys
+    .map((k, i) => ({ ...byKey[k], order: i }))
+    .filter(Boolean);
   writeHabits(reordered);
   notifyHabits();
 }

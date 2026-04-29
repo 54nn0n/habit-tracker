@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import type { PointerEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Habit, Severity } from "@/lib/habits";
 import type { HabitDayEntry } from "@/lib/date-utils";
@@ -11,7 +12,7 @@ import ConfirmModal from "./confirm-modal";
 interface HabitCardProps {
   habit: Habit;
   days: HabitDayEntry[];
-  onSeverityChange: (dateStr: string, severity: Severity) => void;
+  onSeverityChange: (dateStr: string, severity: Severity | undefined) => void;
   onDelete?: (key: string) => void;
 }
 
@@ -19,12 +20,12 @@ interface DayColumnProps {
   day: HabitDayEntry;
   color: string;
   logType: Habit["logType"];
-  onSeverityChange: (dateStr: string, severity: Severity) => void;
+  onSeverityChange: (dateStr: string, severity: Severity | undefined) => void;
 }
 
 function DayColumn({ day, color, logType, onSeverityChange }: DayColumnProps) {
   const handleChange = useCallback(
-    (s: Severity) => onSeverityChange(day.dateStr, s),
+    (s: Severity | undefined) => onSeverityChange(day.dateStr, s),
     [day.dateStr, onSeverityChange],
   );
   return (
@@ -52,25 +53,32 @@ export default function HabitCard({
 }: HabitCardProps) {
   const router = useRouter();
   const [offsetX, setOffsetX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const [deleteConfirming, setDeleteConfirming] = useState(false);
   const startX = useRef<number | null>(null);
   const startOffsetX = useRef(0);
-  const isDragging = useRef(false);
 
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    startX.current = e.clientX;
-    startOffsetX.current = offsetX;
-    isDragging.current = false;
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-  }, [offsetX]);
+  const handlePointerDown = useCallback(
+    (e: PointerEvent) => {
+      startX.current = e.clientX;
+      startOffsetX.current = offsetX;
+      setIsDragging(false);
+    },
+    [offsetX],
+  );
 
   const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
+    (e: PointerEvent) => {
       if (startX.current === null) return;
       const dx = e.clientX - startX.current;
       if (Math.abs(dx) < 4) return;
+      // Capture only once the gesture is confirmed as a swipe so that simple
+      // taps still fire click events on child elements.
+      if (!e.currentTarget.hasPointerCapture(e.pointerId)) {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      }
       const target = startOffsetX.current + dx;
-      isDragging.current = true;
+      setIsDragging(true);
       if (target < 0 && onDelete) {
         setOffsetX(Math.max(target, -SWIPE_THRESHOLD - 20));
       } else if (target > 0) {
@@ -90,6 +98,7 @@ export default function HabitCard({
     } else {
       setOffsetX(0);
     }
+    setIsDragging(false);
     startX.current = null;
   }, [offsetX]);
 
@@ -146,7 +155,7 @@ export default function HabitCard({
             border: `2px solid ${habit.color}`,
             boxShadow: `var(--px-shadow) ${hexToRgba(habit.color, 0.5)}`,
             transform: `translateX(${offsetX}px)`,
-            transition: isDragging.current ? "none" : "transform 200ms ease",
+            transition: isDragging ? "none" : "transform 200ms ease",
             touchAction: "pan-y",
             userSelect: "none",
           }}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useCallback } from "react";
-import type { Habit, Severity } from "@/lib/habits";
+import type { Habit, HabitLogType, Severity } from "@/lib/habits";
 import {
   buildCalendarYear,
   computeYearStats,
@@ -29,14 +29,15 @@ const MONTH_NAMES = [
 
 interface YearCalendarProps {
   habit: Habit;
-  logs: Record<string, Severity>;
+  logs: Partial<Record<string, Severity>>;
   onDaySelect: (dateStr: string) => void;
 }
 
 interface MonthViewProps {
   grid: MonthGrid;
-  logs: Record<string, Severity>;
+  logs: Partial<Record<string, Severity>>;
   color: string;
+  logType: HabitLogType;
   todayStr: string;
   onDaySelect: (dateStr: string) => void;
 }
@@ -45,6 +46,7 @@ function MonthView({
   grid,
   logs,
   color,
+  logType,
   todayStr,
   onDaySelect,
 }: MonthViewProps) {
@@ -74,7 +76,22 @@ function MonthView({
             const dateStr = `${monthStr}-${String(day).padStart(2, "0")}`;
             const isFuture = dateStr > todayStr;
             const isToday = dateStr === todayStr;
-            const severity = logs[dateStr] ?? 0;
+            const severity = logs[dateStr];
+            const isFull =
+              !isFuture &&
+              severity !== undefined &&
+              severity > 0 &&
+              (logType === "boolean" || severity === 2);
+            const bgColor =
+              !isFuture && severity !== undefined && severity > 0
+                ? isFull
+                  ? hexToRgba(color, 1)
+                  : severityColor(severity as 1 | 2, color)
+                : "transparent";
+            const insetShadow =
+              !isFuture && severity === 0
+                ? `inset 0 0 0 1px ${hexToRgba(color, 0.4)}`
+                : undefined;
 
             return (
               <button
@@ -85,10 +102,8 @@ function MonthView({
                 aria-label={dateStr}
                 style={{
                   aspectRatio: "1",
-                  backgroundColor:
-                    !isFuture && severity > 0
-                      ? severityColor(severity, color)
-                      : "transparent",
+                  backgroundColor: bgColor,
+                  boxShadow: insetShadow,
                   outline: isToday
                     ? `2px solid var(--color-yellow)`
                     : undefined,
@@ -104,7 +119,7 @@ function MonthView({
                   style={{
                     color: isFuture
                       ? hexToRgba("#9999bb", 0.4)
-                      : severity === 2
+                      : isFull
                         ? "#0a0a0f"
                         : "var(--color-foreground)",
                   }}
@@ -159,6 +174,7 @@ export default function YearCalendar({
             grid={grid}
             logs={logs}
             color={habit.color}
+            logType={habit.logType}
             todayStr={todayStr}
             onDaySelect={handleDaySelect}
           />

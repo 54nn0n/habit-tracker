@@ -26,10 +26,7 @@ export default function SegmentedToggle<T extends string>({
       <p className="font-body text-xs text-muted uppercase tracking-[2px]">
         {label}
       </p>
-      <div
-        className="flex"
-        style={{ border: `1px solid var(--color-border)` }}
-      >
+      <div className="flex" style={{ border: `1px solid var(--color-border)` }}>
         {options.map((opt, i) => {
           const isActive = opt.value === value;
           return (
@@ -46,7 +43,9 @@ export default function SegmentedToggle<T extends string>({
               <span
                 className="font-display text-[10px]"
                 style={{
-                  color: isActive ? "var(--color-background)" : "var(--color-muted)",
+                  color: isActive
+                    ? "var(--color-background)"
+                    : "var(--color-muted)",
                 }}
               >
                 {opt.label}

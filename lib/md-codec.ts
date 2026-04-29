@@ -1,6 +1,6 @@
 import { getHabits } from "./habits";
 import type { Severity } from "./habits";
-import type { AllLogs } from "./storage";
+import type { AllLogs, DayLogs } from "./storage";
 
 function makeHeader(habits: ReturnType<typeof getHabits>): string {
   const cols = habits.map((h) => h.label).join(" | ");
@@ -8,30 +8,49 @@ function makeHeader(habits: ReturnType<typeof getHabits>): string {
   return `# Habit Log\n\n| Date | ${cols} |\n|------|${sep}|`;
 }
 
-function toSeverity(n: number): Severity {
-  return (n >= 0 && n <= 2 ? n : 0) as Severity;
+function toSeverity(n: number): Severity | undefined {
+  return (n === 0 || n === 1 || n === 2 ? n : undefined) as
+    | Severity
+    | undefined;
 }
 
 export function encodeLogs(logs: AllLogs): string {
   const habits = getHabits();
   const header = makeHeader(habits);
   const rows = Object.entries(logs)
-    .filter(([, day]) => habits.some((h) => (day[h.key] ?? 0) > 0))
+    .filter((entry): entry is [string, DayLogs] => {
+      const day = entry[1];
+      return (
+        day !== undefined && habits.some((h) => day[h.key] !== undefined)
+      );
+    })
     .sort(([a], [b]) => b.localeCompare(a))
     .map(
       ([date, day]) =>
-        `| ${date} | ${habits.map((h) => day[h.key] ?? 0).join(" | ")} |`,
+        `| ${date} | ${habits
+          .map((h) => {
+            const v = day[h.key];
+            return v !== undefined ? v : "";
+          })
+          .join(" | ")} |`,
     );
   return rows.length > 0 ? `${header}\n${rows.join("\n")}` : header;
 }
 
 export function decodeLogs(md: string): AllLogs {
-  const habits = getHabits();
   const headerMatch = md.match(/\|\s*Date\s*\|(.*)\|/);
   if (!headerMatch) return {};
-  const cols = headerMatch[1]
-    .split("|")
-    .map((s) => s.trim().toLowerCase().replace(/\s+/g, "_"));
+
+  // Normalize column headers to keys the same way toKey() does at habit creation
+  const SAFE_KEY = /^[a-z0-9_]+$/;
+  const cols = headerMatch[1].split("|").map((s) => {
+    const key = s
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-z0-9_]/g, "");
+    return SAFE_KEY.test(key) ? key : "";
+  });
 
   const rowRe = /^\|\s*(\d{4}-\d{2}-\d{2})\s*\|(.*)\|/;
   const logs: AllLogs = {};
@@ -41,16 +60,14 @@ export function decodeLogs(md: string): AllLogs {
     if (!m) continue;
     const [, date, rest] = m;
     const values = rest.split("|").map((s) => s.trim());
-    const day: Record<string, Severity> = {};
+    const day: DayLogs = {};
     cols.forEach((col, i) => {
-      const habit = habits.find(
-        (h) =>
-          h.key === col ||
-          h.label.toLowerCase().replace(/\s+/g, "_") === col,
-      );
-      if (!habit) return;
-      const s = toSeverity(Number(values[i]));
-      if (s > 0) day[habit.key] = s;
+      if (!col) return;
+      const raw = values[i] ?? "";
+      if (raw === "" || !/^\d+$/.test(raw)) return;
+      const s = toSeverity(Number(raw));
+      if (s === undefined) return;
+      day[col] = s;
     });
     if (Object.keys(day).length > 0) logs[date] = day;
   }

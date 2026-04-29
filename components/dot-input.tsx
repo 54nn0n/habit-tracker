@@ -6,31 +6,35 @@ import type { Severity, HabitLogType } from "@/lib/habits";
 import { nextSeverity } from "@/lib/habits";
 import { hexToRgba } from "@/lib/date-utils";
 
-const SEVERITY_ALPHAS: Record<Severity, number> = {
-  0: 0,
-  1: 0.5,
-  2: 1,
-};
+const SEVERITY_ALPHAS: Record<1 | 2, number> = { 1: 0.5, 2: 1 };
 
-function squareStyle(severity: Severity, color: string): CSSProperties {
+function squareStyle(
+  severity: Severity | undefined,
+  color: string,
+  logType: HabitLogType,
+): CSSProperties {
+  if (severity === undefined) {
+    return { border: `2px dashed ${hexToRgba(color, 0.35)}` };
+  }
   if (severity === 0) {
     return { border: `2px solid ${hexToRgba(color, 0.35)}` };
   }
+  const isFull = logType === "boolean" || severity === 2;
   return {
-    backgroundColor: hexToRgba(color, SEVERITY_ALPHAS[severity]),
+    backgroundColor: hexToRgba(color, isFull ? 1 : SEVERITY_ALPHAS[severity]),
     border: `2px solid ${color}`,
-    boxShadow: severity === 2 ? `0 0 6px ${hexToRgba(color, 0.7)}` : undefined,
+    boxShadow: isFull ? `0 0 6px ${hexToRgba(color, 0.7)}` : undefined,
   };
 }
 
 interface DotInputProps {
-  severity: Severity;
+  severity: Severity | undefined;
   color: string;
   logType: HabitLogType;
   dayLabel: string;
   dayNumber: number;
   isToday: boolean;
-  onChange: (severity: Severity) => void;
+  onChange: (severity: Severity | undefined) => void;
 }
 
 export default function DotInput({
@@ -51,7 +55,7 @@ export default function DotInput({
     <button
       type="button"
       onClick={handleTap}
-      aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of ${logType === "boolean" ? 1 : 2}`}
+      aria-label={`${dayLabel} ${dayNumber}, severity ${severity ?? "none"} of ${logType === "boolean" ? 1 : 2}`}
       className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
       <span
@@ -66,7 +70,7 @@ export default function DotInput({
       </span>
       <span
         className="w-8 h-8 flex-shrink-0 transition-all duration-150"
-        style={squareStyle(severity, color)}
+        style={squareStyle(severity, color, logType)}
       />
     </button>
   );
