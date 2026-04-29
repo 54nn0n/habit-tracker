@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import type { PointerEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Habit, Severity } from "@/lib/habits";
 import type { HabitDayEntry } from "@/lib/date-utils";
@@ -58,7 +59,7 @@ export default function HabitCard({
   const startOffsetX = useRef(0);
 
   const handlePointerDown = useCallback(
-    (e: React.PointerEvent) => {
+    (e: PointerEvent) => {
       startX.current = e.clientX;
       startOffsetX.current = offsetX;
       setIsDragging(false);
@@ -67,7 +68,7 @@ export default function HabitCard({
   );
 
   const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
+    (e: PointerEvent) => {
       if (startX.current === null) return;
       const dx = e.clientX - startX.current;
       if (Math.abs(dx) < 4) return;

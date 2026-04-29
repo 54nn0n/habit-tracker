@@ -211,9 +211,7 @@ function SettingsInner() {
             onChange={handleImport}
           />
           {toast && (
-            <p
-              className={`font-body text-xs ${TOAST_CLASS[toast.type]}`}
-            >
+            <p className={`font-body text-xs ${TOAST_CLASS[toast.type]}`}>
               {toast.message}
             </p>
           )}

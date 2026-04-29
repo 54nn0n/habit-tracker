@@ -8,7 +8,11 @@ interface HabitHeaderProps {
 export default function HabitHeader({ habit, subtitle }: HabitHeaderProps) {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="text-2xl leading-none" role="img" aria-label={habit.label}>
+      <span
+        className="text-2xl leading-none"
+        role="img"
+        aria-label={habit.label}
+      >
         {habit.emoji}
       </span>
       <div>
