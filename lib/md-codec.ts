@@ -64,7 +64,7 @@ export function decodeLogs(md: string): AllLogs {
     cols.forEach((col, i) => {
       if (!col) return;
       const raw = values[i] ?? "";
-      if (raw === "") return;
+      if (raw === "" || !/^\d+$/.test(raw)) return;
       const s = toSeverity(Number(raw));
       if (s === undefined) return;
       day[col] = s;
