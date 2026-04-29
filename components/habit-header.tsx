@@ -1,5 +1,4 @@
 import type { Habit } from "@/lib/habits";
-import { hexToRgba } from "@/lib/date-utils";
 
 interface HabitHeaderProps {
   habit: Habit;
@@ -9,17 +8,9 @@ interface HabitHeaderProps {
 export default function HabitHeader({ habit, subtitle }: HabitHeaderProps) {
   return (
     <div className="flex items-center gap-2.5">
-      <div
-        className="flex items-center justify-center shrink-0 w-[34px] h-[34px]"
-        style={{
-          backgroundColor: hexToRgba(habit.color, 0.12),
-          border: `2px solid ${habit.color}`,
-        }}
-      >
-        <span className="text-base" role="img" aria-label={habit.label}>
-          {habit.emoji}
-        </span>
-      </div>
+      <span className="text-2xl leading-none" role="img" aria-label={habit.label}>
+        {habit.emoji}
+      </span>
       <div>
         <p
           className="font-display leading-tight text-xs"
