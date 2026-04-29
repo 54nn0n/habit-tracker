@@ -51,8 +51,8 @@ export function getServerLogsSnapshot(): AllLogs {
   return EMPTY_LOGS;
 }
 
-export function getLog(date: string, habit: string): Severity {
-  return readAll()[date]?.[habit] ?? 0;
+export function getLog(date: string, habit: string): Severity | undefined {
+  return readAll()[date]?.[habit];
 }
 
 export function getAllLogs(): AllLogs {
@@ -69,9 +69,20 @@ export function setWriteCallback(fn: () => void): void {
   onWriteCallback = fn;
 }
 
-export function setLog(date: string, habit: string, severity: Severity): void {
+export function setLog(
+  date: string,
+  habit: string,
+  severity: Severity | undefined,
+): void {
   const logs = readAll();
-  logs[date] = { ...logs[date], [habit]: severity };
+  if (severity === undefined) {
+    if (logs[date]) {
+      delete logs[date][habit];
+      if (Object.keys(logs[date]).length === 0) delete logs[date];
+    }
+  } else {
+    logs[date] = { ...logs[date], [habit]: severity };
+  }
   writeAll(logs);
   notify();
   onWriteCallback?.();

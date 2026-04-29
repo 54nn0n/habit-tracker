@@ -21,7 +21,7 @@ export default function YearPage() {
     for (const [date, dayLogs] of Object.entries(allLogs)) {
       for (const habit of habits) {
         const s = dayLogs[habit.key];
-        if (s !== undefined && s > 0) result[habit.key][date] = s;
+        if (s !== undefined) result[habit.key][date] = s;
       }
     }
     return result;
@@ -29,9 +29,8 @@ export default function YearPage() {
 
   const selectedDayLogs = useMemo((): Record<string, Severity> => {
     if (!selectedDate) return {};
-    const day = allLogs[selectedDate] ?? {};
-    return Object.fromEntries(habits.map((h) => [h.key, day[h.key] ?? 0]));
-  }, [selectedDate, allLogs, habits]);
+    return allLogs[selectedDate] ?? {};
+  }, [selectedDate, allLogs]);
 
   const handleDaySelect = useCallback(
     (date: string) => setSelectedDate(date),

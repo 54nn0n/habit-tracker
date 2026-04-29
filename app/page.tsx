@@ -21,13 +21,18 @@ const DAYS_TO_SHOW = 5;
 interface HabitRowProps {
   habit: Habit;
   days: HabitDayEntry[];
-  onUpdate: (habitKey: string, dateStr: string, severity: Severity) => void;
+  onUpdate: (
+    habitKey: string,
+    dateStr: string,
+    severity: Severity | undefined,
+  ) => void;
   onDelete: (key: string) => void;
 }
 
 function HabitRow({ habit, days, onUpdate, onDelete }: HabitRowProps) {
   const handleChange = useCallback(
-    (dateStr: string, s: Severity) => onUpdate(habit.key, dateStr, s),
+    (dateStr: string, s: Severity | undefined) =>
+      onUpdate(habit.key, dateStr, s),
     [habit.key, onUpdate],
   );
   return (
@@ -58,14 +63,15 @@ export default function TodayPage() {
         habit,
         days: baseDays.map((day) => ({
           ...day,
-          severity: allLogs[day.dateStr]?.[habit.key] ?? 0,
+          severity: allLogs[day.dateStr]?.[habit.key],
         })),
       })),
     [sortedHabits, baseDays, allLogs],
   );
 
   const handleUpdate = useCallback(
-    (key: string, dateStr: string, s: Severity) => setLog(dateStr, key, s),
+    (key: string, dateStr: string, s: Severity | undefined) =>
+      setLog(dateStr, key, s),
     [],
   );
 

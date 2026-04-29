@@ -11,7 +11,7 @@ import ConfirmModal from "./confirm-modal";
 interface HabitCardProps {
   habit: Habit;
   days: HabitDayEntry[];
-  onSeverityChange: (dateStr: string, severity: Severity) => void;
+  onSeverityChange: (dateStr: string, severity: Severity | undefined) => void;
   onDelete?: (key: string) => void;
 }
 
@@ -19,12 +19,12 @@ interface DayColumnProps {
   day: HabitDayEntry;
   color: string;
   logType: Habit["logType"];
-  onSeverityChange: (dateStr: string, severity: Severity) => void;
+  onSeverityChange: (dateStr: string, severity: Severity | undefined) => void;
 }
 
 function DayColumn({ day, color, logType, onSeverityChange }: DayColumnProps) {
   const handleChange = useCallback(
-    (s: Severity) => onSeverityChange(day.dateStr, s),
+    (s: Severity | undefined) => onSeverityChange(day.dateStr, s),
     [day.dateStr, onSeverityChange],
   );
   return (
@@ -62,7 +62,6 @@ export default function HabitCard({
       startX.current = e.clientX;
       startOffsetX.current = offsetX;
       setIsDragging(false);
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     },
     [offsetX],
   );
@@ -72,6 +71,11 @@ export default function HabitCard({
       if (startX.current === null) return;
       const dx = e.clientX - startX.current;
       if (Math.abs(dx) < 4) return;
+      // Capture only once the gesture is confirmed as a swipe so that simple
+      // taps still fire click events on child elements.
+      if (!e.currentTarget.hasPointerCapture(e.pointerId)) {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      }
       const target = startOffsetX.current + dx;
       setIsDragging(true);
       if (target < 0 && onDelete) {

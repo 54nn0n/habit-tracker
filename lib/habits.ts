@@ -12,15 +12,19 @@ export interface Habit {
   order: number;
 }
 
-export const SEVERITY_CYCLE: Record<Severity, Severity> = { 0: 1, 1: 2, 2: 0 };
-export const BOOLEAN_CYCLE: Record<0 | 1, 0 | 1> = { 0: 1, 1: 0 };
-
 export function nextSeverity(
-  current: Severity,
+  current: Severity | undefined,
   logType: HabitLogType,
-): Severity {
-  if (logType === "boolean") return current === 0 ? 1 : 0;
-  return SEVERITY_CYCLE[current];
+): Severity | undefined {
+  if (logType === "boolean") {
+    if (current === undefined) return 0;
+    if (current === 0) return 1;
+    return undefined;
+  }
+  if (current === undefined) return 0;
+  if (current === 0) return 1;
+  if (current === 1) return 2;
+  return undefined;
 }
 
 export const HABIT_COLORS = [
@@ -114,8 +118,9 @@ export function getHabitsSnapshot(): Habit[] {
   return snapshot;
 }
 
+const EMPTY_HABITS: Habit[] = [];
 export function getServerHabitsSnapshot(): Habit[] {
-  return [];
+  return EMPTY_HABITS;
 }
 
 export function getHabits(): Habit[] {

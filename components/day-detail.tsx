@@ -29,7 +29,7 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
     [onClose],
   );
 
-  const allZero = habits.every((h) => (logs[h.key] ?? 0) === 0);
+  const nothingLogged = habits.every((h) => !(h.key in logs));
 
   return (
     <div
@@ -54,13 +54,13 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
           </Button>
         </div>
 
-        {allZero ? (
+        {nothingLogged ? (
           <p className="font-body text-[11px] text-muted">Nothing logged</p>
         ) : (
           <div className="flex flex-col gap-4">
             {habits.map((habit) => {
-              const severity = logs[habit.key] ?? 0;
-              if (severity === 0) return null;
+              if (!(habit.key in logs)) return null;
+              const severity = logs[habit.key];
               return (
                 <div
                   key={habit.key}

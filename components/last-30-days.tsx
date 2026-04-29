@@ -39,16 +39,18 @@ export default function Last30Days({ allLogs }: Last30DaysProps) {
             </span>
             <div className="flex-1 flex gap-px">
               {days.map((dateStr) => {
-                const severity = allLogs[dateStr]?.[habit.key] ?? 0;
+                const severity = allLogs[dateStr]?.[habit.key];
                 return (
                   <div
                     key={dateStr}
                     className="flex-1 aspect-square"
                     style={{
                       backgroundColor:
-                        severity > 0
+                        severity !== undefined && severity > 0
                           ? severityColor(severity, habit.color)
-                          : hexToRgba(habit.color, 0.1),
+                          : severity === 0
+                            ? hexToRgba(habit.color, 0.15)
+                            : "transparent",
                     }}
                   />
                 );

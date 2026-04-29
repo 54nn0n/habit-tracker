@@ -12,7 +12,13 @@ const SEVERITY_ALPHAS: Record<Severity, number> = {
   2: 1,
 };
 
-function squareStyle(severity: Severity, color: string): CSSProperties {
+function squareStyle(
+  severity: Severity | undefined,
+  color: string,
+): CSSProperties {
+  if (severity === undefined) {
+    return { border: `2px dashed ${hexToRgba(color, 0.35)}` };
+  }
   if (severity === 0) {
     return { border: `2px solid ${hexToRgba(color, 0.35)}` };
   }
@@ -24,13 +30,13 @@ function squareStyle(severity: Severity, color: string): CSSProperties {
 }
 
 interface DotInputProps {
-  severity: Severity;
+  severity: Severity | undefined;
   color: string;
   logType: HabitLogType;
   dayLabel: string;
   dayNumber: number;
   isToday: boolean;
-  onChange: (severity: Severity) => void;
+  onChange: (severity: Severity | undefined) => void;
 }
 
 export default function DotInput({
@@ -51,7 +57,7 @@ export default function DotInput({
     <button
       type="button"
       onClick={handleTap}
-      aria-label={`${dayLabel} ${dayNumber}, severity ${severity} of ${logType === "boolean" ? 1 : 2}`}
+      aria-label={`${dayLabel} ${dayNumber}, severity ${severity ?? "none"} of ${logType === "boolean" ? 1 : 2}`}
       className="flex flex-col items-center gap-1.5 min-w-[44px] min-h-[44px] py-1 flex-1"
     >
       <span

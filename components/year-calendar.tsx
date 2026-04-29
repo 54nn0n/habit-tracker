@@ -74,7 +74,7 @@ function MonthView({
             const dateStr = `${monthStr}-${String(day).padStart(2, "0")}`;
             const isFuture = dateStr > todayStr;
             const isToday = dateStr === todayStr;
-            const severity = logs[dateStr] ?? 0;
+            const severity = logs[dateStr];
 
             return (
               <button
@@ -86,7 +86,7 @@ function MonthView({
                 style={{
                   aspectRatio: "1",
                   backgroundColor:
-                    !isFuture && severity > 0
+                    !isFuture && severity !== undefined && severity > 0
                       ? severityColor(severity, color)
                       : "transparent",
                   outline: isToday

@@ -16,11 +16,11 @@ export function encodeLogs(logs: AllLogs): string {
   const habits = getHabits();
   const header = makeHeader(habits);
   const rows = Object.entries(logs)
-    .filter(([, day]) => habits.some((h) => (day[h.key] ?? 0) > 0))
+    .filter(([, day]) => Object.keys(day).length > 0)
     .sort(([a], [b]) => b.localeCompare(a))
     .map(
       ([date, day]) =>
-        `| ${date} | ${habits.map((h) => day[h.key] ?? 0).join(" | ")} |`,
+        `| ${date} | ${habits.map((h) => (h.key in day ? day[h.key] : "")).join(" | ")} |`,
     );
   return rows.length > 0 ? `${header}\n${rows.join("\n")}` : header;
 }
@@ -49,8 +49,10 @@ export function decodeLogs(md: string): AllLogs {
     const day: Record<string, Severity> = {};
     cols.forEach((col, i) => {
       if (!col) return;
-      const s = toSeverity(Number(values[i] ?? 0));
-      if (s > 0) day[col] = s;
+      const raw = values[i] ?? "";
+      if (raw === "") return;
+      const s = toSeverity(Number(raw));
+      day[col] = s;
     });
     if (Object.keys(day).length > 0) logs[date] = day;
   }

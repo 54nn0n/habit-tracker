@@ -33,7 +33,7 @@ export interface DayEntry {
 }
 
 export interface HabitDayEntry extends DayEntry {
-  severity: Severity;
+  severity: Severity | undefined;
 }
 
 export function getLastNDays(n: number): DayEntry[] {
@@ -124,12 +124,15 @@ export function computeYearStats(
 
   while (cursor <= endDate) {
     const dateStr = toLocalDateString(cursor);
-    const severity = logs[dateStr] ?? 0;
+    // undefined = not tracked; 0 = explicitly none; >0 = logged something
+    const severity = logs[dateStr];
     totalDays++;
-    if (severity > 0) loggedDays++;
-    // Reducing: streak = consecutive clean days. Building: streak = consecutive logged days.
+    if (severity !== undefined && severity > 0) loggedDays++;
+    // Reducing: clean = no entry or explicit 0. Building: active = explicit entry > 0.
     const isStreakDay =
-      direction === "reducing" ? severity === 0 : severity > 0;
+      direction === "reducing"
+        ? severity === undefined || severity === 0
+        : severity !== undefined && severity > 0;
     if (isStreakDay) {
       longestStreak = Math.max(longestStreak, ++streak);
     } else {
