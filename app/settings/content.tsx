@@ -32,6 +32,11 @@ const STATUS_CLASS: Record<SyncStatus, string> = {
   error: "text-red",
 };
 
+const TOAST_CLASS: Record<"success" | "error", string> = {
+  success: "text-green",
+  error: "text-red",
+};
+
 const SECTION_LABEL =
   "font-display text-[8px] text-accent tracking-[2px] uppercase mb-2";
 const PANEL =
@@ -43,7 +48,11 @@ function SettingsInner() {
   const [email, setEmail] = useState(() => getEmail());
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
   const [lastSynced, setLastSynced] = useState<Date | null>(null);
-  const [importError, setImportError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -52,6 +61,15 @@ function SettingsInner() {
       setLastSynced(t);
     });
   }, []);
+
+  const showToast = useCallback(
+    (type: "success" | "error", message: string) => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      setToast({ type, message });
+      toastTimer.current = setTimeout(() => setToast(null), 2500);
+    },
+    [],
+  );
 
   const handleConnect = useCallback(() => startGoogleAuth(), []);
 
@@ -62,31 +80,39 @@ function SettingsInner() {
   }, []);
 
   const handleExport = useCallback(() => {
-    const md = encodeLogs(getAllLogs());
-    const blob = new Blob([md], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "93_Habits_Log.md";
-    a.click();
-    URL.revokeObjectURL(url);
-  }, []);
+    try {
+      const md = encodeLogs(getAllLogs());
+      const blob = new Blob([md], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "93_Habits_Log.md";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("success", "✓ EXPORTED");
+    } catch {
+      showToast("error", "✕ Export failed.");
+    }
+  }, [showToast]);
 
-  const handleImport = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      try {
-        setAllLogs(decodeLogs(ev.target?.result as string));
-        setImportError(null);
-        syncNow();
-      } catch {
-        setImportError("Could not parse file.");
-      }
-    };
-    reader.readAsText(file);
-  }, []);
+  const handleImport = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          setAllLogs(decodeLogs(ev.target?.result as string));
+          showToast("success", "✓ IMPORTED");
+          syncNow();
+        } catch {
+          showToast("error", "✕ Could not parse file.");
+        }
+      };
+      reader.readAsText(file);
+    },
+    [showToast],
+  );
 
   const authError = searchParams.get("error");
 
@@ -184,8 +210,12 @@ function SettingsInner() {
             className="hidden"
             onChange={handleImport}
           />
-          {importError && (
-            <p className="font-body text-xs text-red">✕ {importError}</p>
+          {toast && (
+            <p
+              className={`font-body text-xs ${TOAST_CLASS[toast.type]}`}
+            >
+              {toast.message}
+            </p>
           )}
         </div>
       </section>
