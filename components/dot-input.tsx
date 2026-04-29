@@ -6,11 +6,7 @@ import type { Severity, HabitLogType } from "@/lib/habits";
 import { nextSeverity } from "@/lib/habits";
 import { hexToRgba } from "@/lib/date-utils";
 
-const SEVERITY_ALPHAS: Record<Severity, number> = {
-  0: 0,
-  1: 0.5,
-  2: 1,
-};
+const SEVERITY_ALPHAS: Record<1 | 2, number> = { 1: 0.5, 2: 1 };
 
 function squareStyle(
   severity: Severity | undefined,

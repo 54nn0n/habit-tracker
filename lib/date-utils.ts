@@ -60,10 +60,9 @@ export function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-const SEVERITY_ALPHAS: Record<Severity, number> = { 0: 0, 1: 0.5, 2: 1 };
+const SEVERITY_ALPHAS: Record<1 | 2, number> = { 1: 0.5, 2: 1 };
 
-export function severityColor(severity: Severity, habitColor: string): string {
-  if (severity === 0) return "transparent";
+export function severityColor(severity: 1 | 2, habitColor: string): string {
   return hexToRgba(habitColor, SEVERITY_ALPHAS[severity]);
 }
 

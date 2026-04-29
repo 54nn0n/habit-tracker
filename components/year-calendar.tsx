@@ -86,7 +86,7 @@ function MonthView({
               !isFuture && severity !== undefined && severity > 0
                 ? isFull
                   ? hexToRgba(color, 1)
-                  : severityColor(severity, color)
+                  : severityColor(severity as 1 | 2, color)
                 : "transparent";
             const insetShadow =
               !isFuture && severity === 0

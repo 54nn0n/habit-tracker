@@ -8,8 +8,10 @@ function makeHeader(habits: ReturnType<typeof getHabits>): string {
   return `# Habit Log\n\n| Date | ${cols} |\n|------|${sep}|`;
 }
 
-function toSeverity(n: number): Severity {
-  return (n >= 0 && n <= 2 ? n : 0) as Severity;
+function toSeverity(n: number): Severity | undefined {
+  return (n === 0 || n === 1 || n === 2 ? n : undefined) as
+    | Severity
+    | undefined;
 }
 
 export function encodeLogs(logs: AllLogs): string {
@@ -60,6 +62,7 @@ export function decodeLogs(md: string): AllLogs {
       const raw = values[i] ?? "";
       if (raw === "") return;
       const s = toSeverity(Number(raw));
+      if (s === undefined) return;
       day[col] = s;
     });
     if (Object.keys(day).length > 0) logs[date] = day;
