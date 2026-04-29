@@ -20,7 +20,9 @@ export function encodeLogs(logs: AllLogs): string {
   const rows = Object.entries(logs)
     .filter((entry): entry is [string, DayLogs] => {
       const day = entry[1];
-      return day !== undefined && Object.keys(day).length > 0;
+      return (
+        day !== undefined && habits.some((h) => day[h.key] !== undefined)
+      );
     })
     .sort(([a], [b]) => b.localeCompare(a))
     .map(
@@ -40,13 +42,15 @@ export function decodeLogs(md: string): AllLogs {
   if (!headerMatch) return {};
 
   // Normalize column headers to keys the same way toKey() does at habit creation
-  const cols = headerMatch[1].split("|").map((s) =>
-    s
+  const SAFE_KEY = /^[a-z0-9_]+$/;
+  const cols = headerMatch[1].split("|").map((s) => {
+    const key = s
       .trim()
       .toLowerCase()
       .replace(/\s+/g, "_")
-      .replace(/[^a-z0-9_]/g, ""),
-  );
+      .replace(/[^a-z0-9_]/g, "");
+    return SAFE_KEY.test(key) ? key : "";
+  });
 
   const rowRe = /^\|\s*(\d{4}-\d{2}-\d{2})\s*\|(.*)\|/;
   const logs: AllLogs = {};

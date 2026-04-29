@@ -62,6 +62,12 @@ function SettingsInner() {
     });
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
+  }, []);
+
   const showToast = useCallback(
     (type: "success" | "error", message: string) => {
       if (toastTimer.current) clearTimeout(toastTimer.current);

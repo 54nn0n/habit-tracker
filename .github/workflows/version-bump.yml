@@ -24,8 +24,15 @@ jobs:
 
       - name: Bump patch version
         run: |
-          npm version patch --no-git-tag-version
-          NEW=$(node -p "require('./package.json').version")
+          OLD=$(node -p "require('./package.json').version")
+          IFS='.' read -r major minor patch <<< "$OLD"
+          NEW="$major.$minor.$((patch + 1))"
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.version = '$NEW';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
           sed -i "s/const VERSION = \"[^\"]*\";/const VERSION = \"$NEW\";/" app/settings/content.tsx
           echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
 

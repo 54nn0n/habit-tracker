@@ -74,11 +74,16 @@ export function setLog(
   habit: string,
   severity: Severity | undefined,
 ): void {
-  const logs = readAll();
+  const logs = { ...readAll() };
   if (severity === undefined) {
     if (logs[date]) {
-      delete logs[date][habit];
-      if (Object.keys(logs[date]).length === 0) delete logs[date];
+      const day = { ...logs[date] };
+      delete day[habit];
+      if (Object.keys(day).length === 0) {
+        delete logs[date];
+      } else {
+        logs[date] = day;
+      }
     }
   } else {
     logs[date] = { ...(logs[date] ?? {}), [habit]: severity };
