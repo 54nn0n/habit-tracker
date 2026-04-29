@@ -26,12 +26,17 @@ export function encodeLogs(logs: AllLogs): string {
 }
 
 export function decodeLogs(md: string): AllLogs {
-  const habits = getHabits();
   const headerMatch = md.match(/\|\s*Date\s*\|(.*)\|/);
   if (!headerMatch) return {};
-  const cols = headerMatch[1]
-    .split("|")
-    .map((s) => s.trim().toLowerCase().replace(/\s+/g, "_"));
+
+  // Normalize column headers to keys the same way toKey() does at habit creation
+  const cols = headerMatch[1].split("|").map((s) =>
+    s
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-z0-9_]/g, ""),
+  );
 
   const rowRe = /^\|\s*(\d{4}-\d{2}-\d{2})\s*\|(.*)\|/;
   const logs: AllLogs = {};
@@ -43,13 +48,9 @@ export function decodeLogs(md: string): AllLogs {
     const values = rest.split("|").map((s) => s.trim());
     const day: Record<string, Severity> = {};
     cols.forEach((col, i) => {
-      const habit = habits.find(
-        (h) =>
-          h.key === col || h.label.toLowerCase().replace(/\s+/g, "_") === col,
-      );
-      if (!habit) return;
-      const s = toSeverity(Number(values[i]));
-      if (s > 0) day[habit.key] = s;
+      if (!col) return;
+      const s = toSeverity(Number(values[i] ?? 0));
+      if (s > 0) day[col] = s;
     });
     if (Object.keys(day).length > 0) logs[date] = day;
   }
