@@ -47,7 +47,7 @@ export default function DayDetail({ dateStr, logs, onClose }: DayDetailProps) {
             {formatDayDetail(dateStr)}
           </h2>
           <Button
-            variant="muted"
+            variant="ghost"
             size="sm"
             onClick={onClose}
             aria-label="Close"

@@ -353,11 +353,11 @@ export default function DesignPage() {
             </Button>
           </div>
           <div className="flex gap-3">
-            <Button variant="muted">DISCONNECT</Button>
-            <Button variant="muted" disabled>
+            <Button variant="ghost">DISCONNECT</Button>
+            <Button variant="ghost" disabled>
               SYNC NOW
             </Button>
-            <Button variant="muted" size="sm">
+            <Button variant="ghost" size="sm">
               CLOSE
             </Button>
           </div>
