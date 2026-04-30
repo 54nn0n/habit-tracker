@@ -96,7 +96,7 @@ export default function TodayPage() {
         <Link
           href="/settings"
           aria-label="Settings"
-          className="w-10 h-10 flex items-center justify-center transition-colors mt-1 text-muted border border-border"
+          className="w-10 h-10 flex items-center justify-center transition-colors mt-1 text-accent"
         >
           <svg
             width="16"

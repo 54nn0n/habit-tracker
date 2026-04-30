@@ -63,7 +63,7 @@ export default function YearPage() {
           </h1>
           <div className="flex items-center gap-2">
             <Button
-              variant="muted"
+              variant="ghost"
               size="sm"
               onClick={handlePrevYear}
               disabled={year <= earliestYear}
@@ -71,7 +71,7 @@ export default function YearPage() {
               ◀
             </Button>
             <Button
-              variant="muted"
+              variant="ghost"
               size="sm"
               onClick={handleNextYear}
               disabled={year >= CURRENT_YEAR}
