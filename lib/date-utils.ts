@@ -122,8 +122,7 @@ export function computeYearStats(
     .filter((d) => d.startsWith(yearStr))
     .sort()[0];
   const effectiveStart =
-    firstInYear &&
-    parseDateLocal(firstInYear).getTime() > yearStart.getTime()
+    firstInYear && parseDateLocal(firstInYear).getTime() > yearStart.getTime()
       ? parseDateLocal(firstInYear)
       : yearStart;
 

@@ -419,6 +419,7 @@ export default function DesignPage() {
           <YearCalendar
             habit={MOCK_HABITS[0]}
             logs={MOCK_LOGS}
+            year={new Date().getFullYear()}
             onDaySelect={handleNoOp}
           />
         </Suspense>
