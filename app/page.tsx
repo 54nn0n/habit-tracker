@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Habit, Severity } from "@/lib/habits";
 import { removeHabit } from "@/lib/habits";
 import { useHabits } from "@/lib/use-habits";
@@ -13,6 +14,7 @@ import {
   formatMonthYear,
 } from "@/lib/date-utils";
 import type { HabitDayEntry } from "@/lib/date-utils";
+import { isOnboardingComplete } from "@/lib/onboarding";
 import HabitCard from "@/components/habit-card";
 import Button from "@/components/button";
 
@@ -46,11 +48,18 @@ function HabitRow({ habit, days, onUpdate, onDelete }: HabitRowProps) {
 }
 
 export default function TodayPage() {
+  const router = useRouter();
   const todayStr = useMemo(() => toLocalDateString(new Date()), []);
   const monthYear = useMemo(() => formatMonthYear(new Date()), []);
   const baseDays = useMemo(() => getLastNDays(DAYS_TO_SHOW), []);
   const allLogs = useLogs();
   const habits = useHabits();
+
+  useEffect(() => {
+    if (!isOnboardingComplete()) {
+      router.replace("/onboarding");
+    }
+  }, [router]);
 
   const sortedHabits = useMemo(
     () => [...habits].sort((a, b) => a.order - b.order),
