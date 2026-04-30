@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import type { ChangeEvent } from "react";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   isConnected,
   getEmail,
@@ -13,6 +14,7 @@ import { subscribeSyncStatus, syncNow } from "@/lib/sync";
 import type { SyncStatus } from "@/lib/sync";
 import { encodeLogs, decodeLogs } from "@/lib/md-codec";
 import { getAllLogs, setAllLogs } from "@/lib/storage";
+import { resetOnboarding } from "@/lib/onboarding";
 import BackButton from "@/components/back-button";
 import Button from "@/components/button";
 
@@ -43,6 +45,7 @@ const PANEL =
   "bg-surface border-2 border-border p-4 flex flex-col gap-3 shadow-px";
 
 function SettingsInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [connected, setConnected] = useState(() => isConnected());
   const [email, setEmail] = useState(() => getEmail());
@@ -78,6 +81,11 @@ function SettingsInner() {
   );
 
   const handleConnect = useCallback(() => startGoogleAuth(), []);
+
+  const handleOnboarding = useCallback(() => {
+    resetOnboarding();
+    router.push("/onboarding");
+  }, [router]);
 
   const handleDisconnect = useCallback(() => {
     disconnect();
@@ -221,6 +229,19 @@ function SettingsInner() {
               {toast.message}
             </p>
           )}
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <p className={SECTION_LABEL}>{"// Help"}</p>
+        <div className={PANEL}>
+          <Button
+            variant="secondary"
+            onClick={handleOnboarding}
+            className="w-full text-center"
+          >
+            REPLAY INTRO
+          </Button>
         </div>
       </section>
 
