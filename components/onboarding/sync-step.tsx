@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import Button from "@/components/button";
 
 interface SyncStepProps {
+  onConnect: () => void;
   onSkip: () => void;
 }
 
@@ -13,7 +13,7 @@ const DRIVE_BENEFITS = [
   "No account required - just your Google Drive",
 ];
 
-export default function SyncStep({ onSkip }: SyncStepProps) {
+export default function SyncStep({ onConnect, onSkip }: SyncStepProps) {
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -63,11 +63,13 @@ export default function SyncStep({ onSkip }: SyncStepProps) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <Link href="/settings" onClick={onSkip} className="block">
-          <Button variant="primary" className="w-full text-center">
-            CONNECT GOOGLE DRIVE
-          </Button>
-        </Link>
+        <Button
+          variant="primary"
+          onClick={onConnect}
+          className="w-full text-center"
+        >
+          CONNECT GOOGLE DRIVE
+        </Button>
         <Button variant="muted" onClick={onSkip} className="w-full text-center">
           SKIP FOR NOW
         </Button>

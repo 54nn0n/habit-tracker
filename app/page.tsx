@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Habit, Severity } from "@/lib/habits";
@@ -49,6 +49,12 @@ function HabitRow({ habit, days, onUpdate, onDelete }: HabitRowProps) {
 
 export default function TodayPage() {
   const router = useRouter();
+  // Check synchronously during mount so there is no flash of today-page content
+  // for users who have not completed onboarding. Server always returns true
+  // (no localStorage), the useEffect handles the redirect.
+  const [onboardingDone] = useState<boolean>(
+    () => typeof window === "undefined" || isOnboardingComplete(),
+  );
   const todayStr = useMemo(() => toLocalDateString(new Date()), []);
   const monthYear = useMemo(() => formatMonthYear(new Date()), []);
   const baseDays = useMemo(() => getLastNDays(DAYS_TO_SHOW), []);
@@ -56,10 +62,10 @@ export default function TodayPage() {
   const habits = useHabits();
 
   useEffect(() => {
-    if (!isOnboardingComplete()) {
+    if (!onboardingDone) {
       router.replace("/onboarding");
     }
-  }, [router]);
+  }, [onboardingDone, router]);
 
   const sortedHabits = useMemo(
     () => [...habits].sort((a, b) => a.order - b.order),
@@ -85,6 +91,8 @@ export default function TodayPage() {
   );
 
   const handleDelete = useCallback((key: string) => removeHabit(key), []);
+
+  if (!onboardingDone) return null;
 
   return (
     <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">

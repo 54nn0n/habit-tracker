@@ -41,7 +41,7 @@ export default function OnboardingPage() {
     if (idx < STEP_ORDER.length - 1) setStep(STEP_ORDER[idx + 1]);
   }, [step]);
 
-  const finish = useCallback(() => {
+  const commitHabits = useCallback(() => {
     selectedSuggestions.forEach((s) => {
       addHabit({
         key: toKey(s.label),
@@ -53,8 +53,17 @@ export default function OnboardingPage() {
       });
     });
     completeOnboarding();
+  }, [selectedSuggestions]);
+
+  const finish = useCallback(() => {
+    commitHabits();
     router.replace("/");
-  }, [selectedSuggestions, router]);
+  }, [commitHabits, router]);
+
+  const finishWithDrive = useCallback(() => {
+    commitHabits();
+    router.replace("/settings");
+  }, [commitHabits, router]);
 
   const stepIndex = STEP_ORDER.indexOf(step);
 
@@ -67,9 +76,7 @@ export default function OnboardingPage() {
             className="h-0.5 flex-1 transition-colors"
             style={{
               backgroundColor:
-                i <= stepIndex
-                  ? "var(--color-accent)"
-                  : "var(--color-border)",
+                i <= stepIndex ? "var(--color-accent)" : "var(--color-border)",
             }}
           />
         ))}
@@ -87,7 +94,9 @@ export default function OnboardingPage() {
         {step === "demo" && (
           <DemoStep firstSuggestion={selectedSuggestions[0]} onNext={advance} />
         )}
-        {step === "sync" && <SyncStep onSkip={finish} />}
+        {step === "sync" && (
+          <SyncStep onConnect={finishWithDrive} onSkip={finish} />
+        )}
       </div>
     </div>
   );
