@@ -2,7 +2,7 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type Variant = "primary" | "secondary" | "muted";
+type Variant = "primary" | "secondary" | "muted" | "ghost";
 type Size = "sm" | "md";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -18,6 +18,7 @@ const VARIANT_CLASS: Record<Variant, string> = {
   secondary:
     "text-accent border-2 border-accent bg-transparent tracking-[0.5px] shadow-px-accent",
   muted: "text-muted border border-border bg-transparent",
+  ghost: "text-accent bg-transparent",
 };
 
 const SIZE_CLASS: Record<Size, string> = {

@@ -30,6 +30,7 @@ const MONTH_NAMES = [
 interface YearCalendarProps {
   habit: Habit;
   logs: Partial<Record<string, Severity>>;
+  year: number;
   onDaySelect: (dateStr: string) => void;
 }
 
@@ -82,15 +83,18 @@ function MonthView({
               severity !== undefined &&
               severity > 0 &&
               (logType === "boolean" || severity === 2);
-            const bgColor =
-              !isFuture && severity !== undefined && severity > 0
-                ? isFull
-                  ? hexToRgba(color, 1)
-                  : severityColor(severity as 1 | 2, color)
-                : "transparent";
+            const bgColor = !isFuture
+              ? severity === undefined
+                ? "transparent"
+                : severity === 0
+                  ? hexToRgba(color, 0.15)
+                  : isFull
+                    ? hexToRgba(color, 1)
+                    : severityColor(severity as 1 | 2, color)
+              : "transparent";
             const insetShadow =
               !isFuture && severity === 0
-                ? `inset 0 0 0 1px ${hexToRgba(color, 0.4)}`
+                ? `inset 0 0 0 1px ${hexToRgba(color, 0.5)}`
                 : undefined;
 
             return (
@@ -138,9 +142,9 @@ function MonthView({
 export default function YearCalendar({
   habit,
   logs,
+  year,
   onDaySelect,
 }: YearCalendarProps) {
-  const year = useMemo(() => new Date().getFullYear(), []);
   const todayStr = useMemo(() => toLocalDateString(new Date()), []);
   const months = useMemo(() => buildCalendarYear(year), [year]);
   const stats = useMemo(

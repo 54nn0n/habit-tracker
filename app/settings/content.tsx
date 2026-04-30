@@ -16,7 +16,7 @@ import { getAllLogs, setAllLogs } from "@/lib/storage";
 import BackButton from "@/components/back-button";
 import Button from "@/components/button";
 
-const VERSION = "0.2.1";
+const VERSION = "0.2.2";
 
 const STATUS_LABEL: Record<SyncStatus, string> = {
   idle: "NOT SYNCED YET",
@@ -151,7 +151,7 @@ function SettingsInner() {
                   </p>
                   <p className="font-body text-xs text-muted mt-0.5">{email}</p>
                 </div>
-                <Button variant="muted" onClick={handleDisconnect}>
+                <Button variant="ghost" onClick={handleDisconnect}>
                   DISCONNECT
                 </Button>
               </div>
@@ -172,7 +172,7 @@ function SettingsInner() {
                   )}
                 </div>
                 <Button
-                  variant="muted"
+                  variant="ghost"
                   onClick={syncNow}
                   disabled={syncStatus === "syncing"}
                 >

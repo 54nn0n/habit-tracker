@@ -115,11 +115,22 @@ export function computeYearStats(
     return { loggedDays: 0, totalDays: 0, percentage: 0, longestStreak: 0 };
   }
 
+  // Start from the first logged date within the year so habits that begin
+  // mid-year don't accumulate a fake streak from untracked Jan–start days.
+  const yearStr = String(year);
+  const firstInYear = Object.keys(logs)
+    .filter((d) => d.startsWith(yearStr))
+    .sort()[0];
+  const effectiveStart =
+    firstInYear && parseDateLocal(firstInYear).getTime() > yearStart.getTime()
+      ? parseDateLocal(firstInYear)
+      : yearStart;
+
   let totalDays = 0;
   let loggedDays = 0;
   let longestStreak = 0;
   let streak = 0;
-  const cursor = new Date(yearStart);
+  const cursor = new Date(effectiveStart);
 
   while (cursor <= endDate) {
     const dateStr = toLocalDateString(cursor);

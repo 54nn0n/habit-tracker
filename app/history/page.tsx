@@ -7,13 +7,23 @@ import type { DayLogs } from "@/lib/storage";
 import YearCalendar from "@/components/year-calendar";
 import Last30Days from "@/components/last-30-days";
 import DayDetail from "@/components/day-detail";
+import Button from "@/components/button";
 
 type PerHabitLogs = Record<string, DayLogs>;
+
+const CURRENT_YEAR = new Date().getFullYear();
 
 export default function YearPage() {
   const allLogs = useLogs();
   const habits = useHabits();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [year, setYear] = useState(CURRENT_YEAR);
+
+  const earliestYear = useMemo(() => {
+    const dates = Object.keys(allLogs);
+    if (dates.length === 0) return CURRENT_YEAR;
+    return Math.min(...dates.map((d) => parseInt(d.slice(0, 4))));
+  }, [allLogs]);
 
   const perHabitLogs = useMemo((): PerHabitLogs => {
     const result: PerHabitLogs = {};
@@ -33,6 +43,8 @@ export default function YearPage() {
     return allLogs[selectedDate] ?? {};
   }, [selectedDate, allLogs]);
 
+  const handlePrevYear = useCallback(() => setYear((y) => y - 1), []);
+  const handleNextYear = useCallback(() => setYear((y) => y + 1), []);
   const handleDaySelect = useCallback(
     (date: string) => setSelectedDate(date),
     [],
@@ -43,21 +55,42 @@ export default function YearPage() {
     <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
       <header className="mb-6">
         <p className="font-body text-xs text-muted uppercase tracking-[3px]">
-          {new Date().getFullYear()}
+          History
         </p>
-        <h1 className="font-display mt-2 leading-tight text-[22px] text-accent">
-          YEAR
-        </h1>
+        <div className="flex items-center justify-between mt-2">
+          <h1 className="font-display leading-tight text-[22px] text-accent">
+            {year}
+          </h1>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handlePrevYear}
+              disabled={year <= earliestYear}
+            >
+              ◀
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleNextYear}
+              disabled={year >= CURRENT_YEAR}
+            >
+              ▶
+            </Button>
+          </div>
+        </div>
       </header>
 
       <div className="flex flex-col gap-4">
-        <Last30Days allLogs={allLogs} />
+        {year === CURRENT_YEAR && <Last30Days allLogs={allLogs} />}
 
         {habits.map((habit) => (
           <YearCalendar
             key={habit.key}
             habit={habit}
             logs={perHabitLogs[habit.key] ?? {}}
+            year={year}
             onDaySelect={handleDaySelect}
           />
         ))}

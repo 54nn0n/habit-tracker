@@ -37,7 +37,7 @@ export default function ConfirmModal({
         <p className="font-body text-xs text-muted mb-6">{message}</p>
         <div className="flex gap-3">
           <Button
-            variant="muted"
+            variant="ghost"
             onClick={onCancel}
             className="flex-1 text-center"
           >
