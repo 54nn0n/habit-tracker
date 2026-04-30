@@ -100,7 +100,7 @@ export default function DemoStep({ firstSuggestion, onNext }: DemoStepProps) {
 
       <div className="bg-surface border-2 border-border p-4">
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-xl">{firstSuggestion?.emoji ?? "✨"}</span>
+          <span className="text-xl">{firstSuggestion?.emoji}</span>
           <span className="font-body text-xs text-foreground">
             {firstSuggestion?.label ?? "My Habit"}
           </span>
