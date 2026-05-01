@@ -1,0 +1,1 @@
+self.addEventListener("push",i=>{let n=i.data?.json()??{},t=n.title??"93 HABITS",o=n.body??"Time to log your habits.";i.waitUntil(self.registration.showNotification(t,{body:o,icon:"/icons/icon-192.png",badge:"/icons/icon-192.png"}))}),self.addEventListener("notificationclick",i=>{i.notification.close(),i.waitUntil(self.clients.openWindow("/"))});
