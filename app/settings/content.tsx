@@ -126,7 +126,11 @@ function SettingsInner() {
       body: JSON.stringify({ deviceId }),
     });
     if (devToastTimer.current) clearTimeout(devToastTimer.current);
-    setDevToast(res.ok ? "Push sent." : "No subscription found.");
+    setDevToast(
+      res.ok
+        ? "✓ Notification sent — check your device."
+        : "✕ Notifications aren't enabled yet.",
+    );
     devToastTimer.current = setTimeout(() => setDevToast(null), 3000);
   }, []);
 

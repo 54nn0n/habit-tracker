@@ -37,7 +37,7 @@ function localTimeToUtcCron(time: string): string {
 }
 
 export function usePushNotifications(): PushState & {
-  subscribe: (time: string) => Promise<void>;
+  subscribe: (time: string) => Promise<boolean>;
   unsubscribe: () => Promise<void>;
   updateTime: (time: string) => Promise<void>;
 } {
@@ -59,18 +59,27 @@ export function usePushNotifications(): PushState & {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
     navigator.serviceWorker.ready.then(async (reg) => {
       const sub = await reg.pushManager.getSubscription();
-      setSubscribed(!!sub);
+      if (!sub) return;
+      // Verify the server also has this subscription — they can drift if the
+      // API call failed silently after the browser subscribed
+      const deviceId = getDeviceId();
+      const res = await fetch(
+        `/api/push/subscribe?deviceId=${encodeURIComponent(deviceId)}`,
+      ).catch(() => null);
+      const { active } = (await res?.json().catch(() => ({}))) ?? {};
+      setSubscribed(!!active);
     });
   }, []);
 
-  const subscribe = useCallback(async (notifTime: string) => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
+  const subscribe = useCallback(async (notifTime: string): Promise<boolean> => {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window))
+      return false;
     setLoading(true);
     setError(null);
     try {
       const perm = await Notification.requestPermission();
       setPermission(perm as NotificationPermission);
-      if (perm !== "granted") return;
+      if (perm !== "granted") return false;
 
       const reg = await navigator.serviceWorker.ready;
       const existing = await reg.pushManager.getSubscription();
@@ -85,8 +94,10 @@ export function usePushNotifications(): PushState & {
           ),
         });
       } catch (e) {
-        setError(`Browser subscription failed: ${(e as Error).message}`);
-        return;
+        setError(
+          `Could not set up notifications in this browser. Try reinstalling the app or using a different browser. (${(e as Error).message})`,
+        );
+        return false;
       }
 
       const cron = localTimeToUtcCron(notifTime);
@@ -98,14 +109,16 @@ export function usePushNotifications(): PushState & {
         body: JSON.stringify({ subscription: sub, cron, deviceId }),
       });
       if (!res.ok) {
-        const text = await res.text().catch(() => res.statusText);
-        setError(`Server error ${res.status}: ${text}`);
-        return;
+        setError(
+          "Could not save your notification settings. Please try again.",
+        );
+        return false;
       }
 
       localStorage.setItem(STORED_TIME_KEY, notifTime);
       setTime(notifTime);
       setSubscribed(true);
+      return true;
     } finally {
       setLoading(false);
     }

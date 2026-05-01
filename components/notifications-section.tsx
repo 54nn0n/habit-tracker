@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import type { ChangeEvent } from "react";
 import { usePushNotifications } from "@/lib/use-push-notifications";
 import Button from "@/components/button";
@@ -13,16 +13,15 @@ const SELECT =
   "font-body text-xs text-foreground bg-surface border border-border px-2 py-1 cursor-pointer";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = [0, 15, 30, 45];
+const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5);
 
 function pad(n: number): string {
   return String(n).padStart(2, "0");
 }
 
-function snapToQuarter(minutes: number): number {
-  return Math.round(minutes / 15) * 15 === 60
-    ? 0
-    : Math.round(minutes / 15) * 15;
+function snapToFive(minutes: number): number {
+  const snapped = Math.round(minutes / 5) * 5;
+  return snapped >= 60 ? 0 : snapped;
 }
 
 interface TimePickerProps {
@@ -34,7 +33,7 @@ interface TimePickerProps {
 function TimePicker({ value, onChange, disabled }: TimePickerProps) {
   const [rawH, rawM] = value.split(":").map(Number);
   const h = rawH ?? 20;
-  const m = snapToQuarter(rawM ?? 0);
+  const m = snapToFive(rawM ?? 0);
 
   const handleHour = (e: ChangeEvent<HTMLSelectElement>) =>
     onChange(`${pad(Number(e.target.value))}:${pad(m)}`);
@@ -86,6 +85,17 @@ export default function NotificationsSection() {
   } = usePushNotifications();
 
   const [pendingTime, setPendingTime] = useState(time);
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleEnable = useCallback(async () => {
+    const ok = await subscribe(pendingTime);
+    if (ok) {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      setToast(`You'll get a daily reminder at ${pendingTime}.`);
+      toastTimer.current = setTimeout(() => setToast(null), 4000);
+    }
+  }, [subscribe, pendingTime]);
 
   const supported =
     typeof window !== "undefined" &&
@@ -100,7 +110,8 @@ export default function NotificationsSection() {
       <div className={PANEL}>
         {permission === "denied" ? (
           <p className="font-body text-xs text-red">
-            Notifications blocked in browser settings.
+            Notifications are blocked. Go to your browser settings to allow
+            them, then come back here.
           </p>
         ) : subscribed ? (
           <>
@@ -138,12 +149,13 @@ export default function NotificationsSection() {
             </div>
             <Button
               variant="primary"
-              onClick={() => subscribe(pendingTime)}
+              onClick={handleEnable}
               disabled={loading}
               className="w-full text-center"
             >
               ENABLE NOTIFICATIONS
             </Button>
+            {toast && <p className="font-body text-xs text-green">{toast}</p>}
             {error && <p className="font-body text-xs text-red">{error}</p>}
           </>
         )}
