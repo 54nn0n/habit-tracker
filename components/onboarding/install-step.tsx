@@ -8,18 +8,18 @@ interface InstallStepProps {
 }
 
 const IOS_STEPS = [
-  { icon: "⬆", text: "Tap the Share button at the bottom of Safari" },
-  { icon: "＋", text: 'Scroll down and tap "Add to Home Screen"' },
-  { icon: "✓", text: 'Tap "Add" in the top right' },
+  "Tap the Share button at the bottom of Safari",
+  'Scroll down and tap "Add to Home Screen"',
+  'Tap "Add" in the top right',
 ];
 
 const ANDROID_STEPS = [
-  { icon: "⋮", text: "Tap the menu icon in the top right of Chrome" },
-  { icon: "＋", text: 'Tap "Add to Home screen" or "Install app"' },
-  { icon: "✓", text: "Tap Install to confirm" },
+  "Tap the menu icon in the top right of Chrome",
+  'Tap "Add to Home screen" or "Install app"',
+  "Tap Install to confirm",
 ];
 
-const PLATFORM_SECTIONS = [
+const PLATFORM_SECTIONS: { label: string; steps: string[] }[] = [
   { label: "SAFARI ON IOS", steps: IOS_STEPS },
   { label: "CHROME ON ANDROID", steps: ANDROID_STEPS },
 ];
@@ -53,12 +53,15 @@ export default function InstallStep({ onNext }: InstallStepProps) {
           </p>
         </div>
         <div className="bg-surface border-2 border-accent p-4 flex items-center gap-3">
-          <span className="font-display text-[14px] text-accent">✓</span>
-          <p className="font-body text-xs text-foreground">
-            Running as installed app
-          </p>
+          <span className="font-display text-[10px] text-accent tracking-[2px]">
+            INSTALLED
+          </span>
         </div>
-        <Button variant="primary" onClick={onNext} className="w-full text-center">
+        <Button
+          variant="primary"
+          onClick={onNext}
+          className="w-full text-center"
+        >
           FINISH
         </Button>
       </div>
@@ -80,23 +83,21 @@ export default function InstallStep({ onNext }: InstallStepProps) {
       </div>
 
       {PLATFORM_SECTIONS.map(({ label, steps }) => (
-        <div key={label} className="bg-surface border-2 border-border p-4 flex flex-col gap-3">
+        <div
+          key={label}
+          className="bg-surface border-2 border-border p-4 flex flex-col gap-3"
+        >
           <p className="font-display text-[8px] text-accent tracking-[2px]">
             {label}
           </p>
-          {steps.map(({ icon, text }, i) => (
+          {steps.map((text, i) => (
             <div key={i} className="flex items-start gap-3">
               <span className="font-display text-[10px] text-accent w-4 flex-shrink-0 mt-0.5">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <div className="flex items-start gap-2 min-w-0">
-                <span className="font-body text-sm text-foreground flex-shrink-0 leading-none mt-0.5">
-                  {icon}
-                </span>
-                <p className="font-body text-xs text-muted leading-relaxed">
-                  {text}
-                </p>
-              </div>
+              <p className="font-body text-xs text-muted leading-relaxed">
+                {text}
+              </p>
             </div>
           ))}
         </div>
@@ -110,11 +111,7 @@ export default function InstallStep({ onNext }: InstallStepProps) {
         >
           I&apos;VE ADDED IT
         </Button>
-        <Button
-          variant="muted"
-          onClick={onNext}
-          className="w-full text-center"
-        >
+        <Button variant="muted" onClick={onNext} className="w-full text-center">
           SKIP FOR NOW
         </Button>
       </div>
