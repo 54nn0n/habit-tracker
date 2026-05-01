@@ -129,7 +129,7 @@ function SettingsInner() {
     setDevToast(
       res.ok
         ? "✓ Notification sent — check your device."
-        : "✕ Not subscribed. Enable notifications first.",
+        : "✕ Notifications aren't enabled yet.",
     );
     devToastTimer.current = setTimeout(() => setDevToast(null), 3000);
   }, []);

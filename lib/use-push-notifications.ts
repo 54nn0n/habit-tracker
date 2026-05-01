@@ -37,7 +37,7 @@ function localTimeToUtcCron(time: string): string {
 }
 
 export function usePushNotifications(): PushState & {
-  subscribe: (time: string) => Promise<void>;
+  subscribe: (time: string) => Promise<boolean>;
   unsubscribe: () => Promise<void>;
   updateTime: (time: string) => Promise<void>;
 } {
@@ -71,14 +71,15 @@ export function usePushNotifications(): PushState & {
     });
   }, []);
 
-  const subscribe = useCallback(async (notifTime: string) => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
+  const subscribe = useCallback(async (notifTime: string): Promise<boolean> => {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window))
+      return false;
     setLoading(true);
     setError(null);
     try {
       const perm = await Notification.requestPermission();
       setPermission(perm as NotificationPermission);
-      if (perm !== "granted") return;
+      if (perm !== "granted") return false;
 
       const reg = await navigator.serviceWorker.ready;
       const existing = await reg.pushManager.getSubscription();
@@ -96,7 +97,7 @@ export function usePushNotifications(): PushState & {
         setError(
           `Could not set up notifications in this browser. Try reinstalling the app or using a different browser. (${(e as Error).message})`,
         );
-        return;
+        return false;
       }
 
       const cron = localTimeToUtcCron(notifTime);
@@ -109,14 +110,15 @@ export function usePushNotifications(): PushState & {
       });
       if (!res.ok) {
         setError(
-          "Could not save your notification schedule. Please try again.",
+          "Could not save your notification settings. Please try again.",
         );
-        return;
+        return false;
       }
 
       localStorage.setItem(STORED_TIME_KEY, notifTime);
       setTime(notifTime);
       setSubscribed(true);
+      return true;
     } finally {
       setLoading(false);
     }
