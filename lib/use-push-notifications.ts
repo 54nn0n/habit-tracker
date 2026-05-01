@@ -48,8 +48,11 @@ export function usePushNotifications(): PushState & {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Initial sync of browser/storage state
+    // Initial sync of browser/storage state to prevent hydration mismatch.
+    // We update these here rather than in useState initializer because
+    // localStorage and Notification are not available during SSR.
     if (typeof Notification !== "undefined") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPermission(Notification.permission as NotificationPermission);
     }
     const storedTime = localStorage.getItem(STORED_TIME_KEY);

@@ -9,11 +9,19 @@ import WelcomeStep from "@/components/onboarding/welcome-step";
 import PickStep from "@/components/onboarding/pick-step";
 import DemoStep from "@/components/onboarding/demo-step";
 import SyncStep from "@/components/onboarding/sync-step";
+import NotificationsStep from "@/components/onboarding/notifications-step";
 import InstallStep from "@/components/onboarding/install-step";
 
-type Step = "welcome" | "pick" | "demo" | "sync" | "install";
+type Step = "welcome" | "pick" | "demo" | "sync" | "notifications" | "install";
 
-const STEP_ORDER: Step[] = ["welcome", "pick", "demo", "sync", "install"];
+const STEP_ORDER: Step[] = [
+  "welcome",
+  "pick",
+  "demo",
+  "sync",
+  "notifications",
+  "install",
+];
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -98,6 +106,7 @@ export default function OnboardingPage() {
         {step === "sync" && (
           <SyncStep onConnect={finishWithDrive} onSkip={advance} />
         )}
+        {step === "notifications" && <NotificationsStep onNext={advance} />}
         {step === "install" && <InstallStep onNext={finish} />}
       </div>
     </div>

@@ -55,7 +55,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="min-h-full flex flex-col bg-background font-body antialiased">
         <AppShell>
-          <main className="flex-1 pb-20">{children}</main>
+          <main className="flex-1 pb-20 pt-[env(safe-area-inset-top)]">
+            {children}
+          </main>
         </AppShell>
         <BottomNav />
       </body>
