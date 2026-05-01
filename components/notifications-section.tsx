@@ -13,16 +13,15 @@ const SELECT =
   "font-body text-xs text-foreground bg-surface border border-border px-2 py-1 cursor-pointer";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const MINUTES = [0, 15, 30, 45];
+const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5);
 
 function pad(n: number): string {
   return String(n).padStart(2, "0");
 }
 
-function snapToQuarter(minutes: number): number {
-  return Math.round(minutes / 15) * 15 === 60
-    ? 0
-    : Math.round(minutes / 15) * 15;
+function snapToFive(minutes: number): number {
+  const snapped = Math.round(minutes / 5) * 5;
+  return snapped >= 60 ? 0 : snapped;
 }
 
 interface TimePickerProps {
@@ -34,7 +33,7 @@ interface TimePickerProps {
 function TimePicker({ value, onChange, disabled }: TimePickerProps) {
   const [rawH, rawM] = value.split(":").map(Number);
   const h = rawH ?? 20;
-  const m = snapToQuarter(rawM ?? 0);
+  const m = snapToFive(rawM ?? 0);
 
   const handleHour = (e: ChangeEvent<HTMLSelectElement>) =>
     onChange(`${pad(Number(e.target.value))}:${pad(m)}`);
