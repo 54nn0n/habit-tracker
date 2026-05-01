@@ -50,9 +50,11 @@ export function usePushNotifications(): PushState & {
   useEffect(() => {
     // Initial sync of browser/storage state
     if (typeof Notification !== "undefined") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPermission(Notification.permission as NotificationPermission);
     }
     const storedTime = localStorage.getItem(STORED_TIME_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (storedTime) setTime(storedTime);
 
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
