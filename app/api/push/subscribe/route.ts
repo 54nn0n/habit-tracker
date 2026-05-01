@@ -33,28 +33,49 @@ export async function GET(request: Request): Promise<Response> {
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const { subscription, cron, deviceId }: SubscribeBody = await request.json();
+  try {
+    const body = await request.json();
+    console.log("Subscribe POST body:", JSON.stringify(body, null, 2));
+    const { subscription, cron, deviceId }: SubscribeBody = body;
 
-  const existing = await redis.get<StoredSub>(`push:sub:${deviceId}`);
+    if (!subscription || !cron || !deviceId) {
+      console.error("Missing required fields:", { subscription: !!subscription, cron, deviceId });
+      return Response.json({ error: "Missing required fields" }, { status: 400 });
+    }
 
-  const destination = `${getOrigin(request)}/api/push/send`;
+    const existing = await redis.get<StoredSub>(`push:sub:${deviceId}`);
+    console.log("Existing sub for device:", deviceId, !!existing);
 
-  // Create new schedule before deleting old — avoids a gap if create fails
-  const { scheduleId } = await qstash.schedules.create({
-    destination,
-    cron,
-    body: JSON.stringify({ deviceId }),
-    headers: { "Content-Type": "application/json" },
-  });
+    const destination = `${getOrigin(request)}/api/push/send`;
+    console.log("QStash destination:", destination);
 
-  await redis.set<StoredSub>(`push:sub:${deviceId}`, {
-    subscription,
-    scheduleId,
-  });
+    // Create new schedule before deleting old — avoids a gap if create fails
+    const { scheduleId } = await qstash.schedules.create({
+      destination,
+      cron,
+      body: JSON.stringify({ deviceId }),
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log("Created QStash schedule:", scheduleId);
 
-  if (existing?.scheduleId) {
-    await qstash.schedules.delete(existing.scheduleId).catch(() => null);
+    await redis.set<StoredSub>(`push:sub:${deviceId}`, {
+      subscription,
+      scheduleId,
+    });
+    console.log("Stored sub in Redis for device:", deviceId);
+
+    if (existing?.scheduleId) {
+      await qstash.schedules.delete(existing.scheduleId).catch((err) => {
+        console.warn("Failed to delete existing schedule:", existing.scheduleId, err);
+      });
+    }
+
+    return Response.json({ ok: true });
+  } catch (error) {
+    console.error("Error in subscribe POST:", error);
+    return Response.json(
+      { error: error instanceof Error ? error.message : "Internal Server Error" },
+      { status: 500 }
+    );
   }
-
-  return Response.json({ ok: true });
 }

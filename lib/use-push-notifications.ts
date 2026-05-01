@@ -41,21 +41,20 @@ export function usePushNotifications(): PushState & {
   unsubscribe: () => Promise<void>;
   updateTime: (time: string) => Promise<void>;
 } {
-  const [permission, setPermission] = useState<NotificationPermission>(
-    () =>
-      (typeof Notification !== "undefined"
-        ? Notification.permission
-        : "default") as NotificationPermission,
-  );
+  const [permission, setPermission] = useState<NotificationPermission>("default");
   const [subscribed, setSubscribed] = useState(false);
-  const [time, setTime] = useState(() => {
-    if (typeof window === "undefined") return DEFAULT_TIME;
-    return localStorage.getItem(STORED_TIME_KEY) ?? DEFAULT_TIME;
-  });
+  const [time, setTime] = useState(DEFAULT_TIME);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Initial sync of browser/storage state
+    if (typeof Notification !== "undefined") {
+      setPermission(Notification.permission as NotificationPermission);
+    }
+    const storedTime = localStorage.getItem(STORED_TIME_KEY);
+    if (storedTime) setTime(storedTime);
+
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
     navigator.serviceWorker.ready.then(async (reg) => {
       const sub = await reg.pushManager.getSubscription();
