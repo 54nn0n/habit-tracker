@@ -22,7 +22,7 @@ const NotificationsSection = dynamic(
   { ssr: false },
 );
 
-const VERSION = "0.2.4";
+const VERSION = "0.2.5";
 
 const TOAST_CLASS: Record<"success" | "error", string> = {
   success: "text-green",
