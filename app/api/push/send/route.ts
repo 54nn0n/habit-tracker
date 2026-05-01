@@ -40,7 +40,11 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   await webPush.sendNotification(
-    { endpoint, keys: { auth: keys.auth, p256dh: keys.p256dh }, expirationTime: expirationTime ?? null },
+    {
+      endpoint,
+      keys: { auth: keys.auth, p256dh: keys.p256dh },
+      expirationTime: expirationTime ?? null,
+    },
     JSON.stringify({ title: "93 HABITS", body: "Time to log your habits." }),
   );
 

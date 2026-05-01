@@ -5,20 +5,17 @@ import type { ChangeEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import {
-  isConnected,
-  getEmail,
-  startGoogleAuth,
-  disconnect,
-} from "@/lib/google-auth";
-import { subscribeSyncStatus, syncNow } from "@/lib/sync";
-import type { SyncStatus } from "@/lib/sync";
 import { encodeLogs, decodeLogs } from "@/lib/md-codec";
 import { getAllLogs, setAllLogs } from "@/lib/storage";
 import { resetOnboarding } from "@/lib/onboarding";
 import { getDeviceId } from "@/lib/push-device-id";
+import { syncNow } from "@/lib/sync";
 import BackButton from "@/components/back-button";
 import Button from "@/components/button";
+
+const DriveSection = dynamic(() => import("@/components/drive-section"), {
+  ssr: false,
+});
 
 const NotificationsSection = dynamic(
   () => import("@/components/notifications-section"),
@@ -26,20 +23,6 @@ const NotificationsSection = dynamic(
 );
 
 const VERSION = "0.2.3";
-
-const STATUS_LABEL: Record<SyncStatus, string> = {
-  idle: "NOT SYNCED YET",
-  syncing: "SYNCING...",
-  synced: "SYNCED",
-  error: "SYNC FAILED",
-};
-
-const STATUS_CLASS: Record<SyncStatus, string> = {
-  idle: "text-muted",
-  syncing: "text-yellow",
-  synced: "text-green",
-  error: "text-red",
-};
 
 const TOAST_CLASS: Record<"success" | "error", string> = {
   success: "text-green",
@@ -51,27 +34,15 @@ const SECTION_LABEL =
 const PANEL =
   "bg-surface border-2 border-border p-4 flex flex-col gap-3 shadow-px";
 
-
 function SettingsInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [connected, setConnected] = useState(() => isConnected());
-  const [email, setEmail] = useState(() => getEmail());
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
-  const [lastSynced, setLastSynced] = useState<Date | null>(null);
   const [toast, setToast] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    return subscribeSyncStatus((s, t) => {
-      setSyncStatus(s);
-      setLastSynced(t);
-    });
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -88,18 +59,10 @@ function SettingsInner() {
     [],
   );
 
-  const handleConnect = useCallback(() => startGoogleAuth(), []);
-
   const handleOnboarding = useCallback(() => {
     resetOnboarding();
     router.push("/onboarding");
   }, [router]);
-
-  const handleDisconnect = useCallback(() => {
-    disconnect();
-    setConnected(false);
-    setEmail(null);
-  }, []);
 
   const handleExport = useCallback(() => {
     try {
@@ -175,60 +138,7 @@ function SettingsInner() {
 
       <section className="mb-8">
         <p className={SECTION_LABEL}>{"// Google Drive"}</p>
-        <div className={PANEL}>
-          {authError && (
-            <p className="font-body text-xs text-red">
-              ✕ Connection failed. Please try again.
-            </p>
-          )}
-          {connected ? (
-            <>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-body text-[11px] text-green">
-                    ▶ CONNECTED
-                  </p>
-                  <p className="font-body text-xs text-muted mt-0.5">{email}</p>
-                </div>
-                <Button variant="ghost" onClick={handleDisconnect}>
-                  DISCONNECT
-                </Button>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p
-                    className={`font-body text-xs ${STATUS_CLASS[syncStatus]}`}
-                  >
-                    {STATUS_LABEL[syncStatus]}
-                  </p>
-                  {lastSynced && (
-                    <p className="font-body text-xs text-muted mt-0.5">
-                      {lastSynced.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  onClick={syncNow}
-                  disabled={syncStatus === "syncing"}
-                >
-                  SYNC NOW
-                </Button>
-              </div>
-            </>
-          ) : (
-            <Button
-              variant="primary"
-              onClick={handleConnect}
-              className="w-full text-center"
-            >
-              CONNECT GOOGLE DRIVE
-            </Button>
-          )}
-        </div>
+        <DriveSection authError={authError} />
       </section>
 
       <section className="mb-8">

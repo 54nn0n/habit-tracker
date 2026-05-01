@@ -46,11 +46,7 @@ export default function NotificationsSection() {
                   Daily reminder at {time}
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                onClick={unsubscribe}
-                disabled={loading}
-              >
+              <Button variant="ghost" onClick={unsubscribe} disabled={loading}>
                 DISABLE
               </Button>
             </div>

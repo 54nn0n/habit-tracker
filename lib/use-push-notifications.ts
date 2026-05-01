@@ -19,7 +19,9 @@ function urlBase64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);
   const base64Url = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
   const raw = atob(base64Url);
-  return Uint8Array.from(raw, (c) => c.charCodeAt(0)) as Uint8Array<ArrayBuffer>;
+  return Uint8Array.from(raw, (c) =>
+    c.charCodeAt(0),
+  ) as Uint8Array<ArrayBuffer>;
 }
 
 function localTimeToUtcCron(time: string): string {
@@ -142,5 +144,13 @@ export function usePushNotifications(): PushState & {
     [subscribed],
   );
 
-  return { permission, subscribed, time, loading, subscribe, unsubscribe, updateTime };
+  return {
+    permission,
+    subscribed,
+    time,
+    loading,
+    subscribe,
+    unsubscribe,
+    updateTime,
+  };
 }

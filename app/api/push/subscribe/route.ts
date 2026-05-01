@@ -34,7 +34,10 @@ export async function POST(request: Request): Promise<Response> {
     headers: { "Content-Type": "application/json" },
   });
 
-  await redis.set<StoredSub>(`push:sub:${deviceId}`, { subscription, scheduleId });
+  await redis.set<StoredSub>(`push:sub:${deviceId}`, {
+    subscription,
+    scheduleId,
+  });
 
   return Response.json({ ok: true });
 }
