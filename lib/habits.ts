@@ -38,45 +38,6 @@ export const HABIT_COLORS = [
   "#4488ff", // blue
 ];
 
-const DEFAULT_HABITS: Habit[] = [
-  {
-    key: "red_meat",
-    label: "Red Meat",
-    emoji: "🥩",
-    color: "#ff4466",
-    direction: "reducing",
-    logType: "severity",
-    order: 0,
-  },
-  {
-    key: "poultry",
-    label: "Poultry",
-    emoji: "🍗",
-    color: "#ff8833",
-    direction: "reducing",
-    logType: "severity",
-    order: 1,
-  },
-  {
-    key: "fish",
-    label: "Fish",
-    emoji: "🐟",
-    color: "#00f5ff",
-    direction: "reducing",
-    logType: "severity",
-    order: 2,
-  },
-  {
-    key: "alcohol",
-    label: "Alcohol",
-    emoji: "🍷",
-    color: "#cc66ff",
-    direction: "reducing",
-    logType: "severity",
-    order: 3,
-  },
-];
-
 const HABITS_KEY = "habit-definitions";
 const listeners = new Set<() => void>();
 let snapshot: Habit[] = [];
@@ -87,11 +48,9 @@ function readHabits(): Habit[] {
   try {
     const raw = localStorage.getItem(HABITS_KEY);
     if (raw) return JSON.parse(raw) as Habit[];
-    // First load — seed defaults
-    localStorage.setItem(HABITS_KEY, JSON.stringify(DEFAULT_HABITS));
-    return DEFAULT_HABITS;
+    return [];
   } catch {
-    return DEFAULT_HABITS;
+    return [];
   }
 }
 
