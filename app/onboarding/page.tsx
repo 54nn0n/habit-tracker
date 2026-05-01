@@ -69,7 +69,7 @@ export default function OnboardingPage() {
   const stepIndex = STEP_ORDER.indexOf(step);
 
   return (
-    <div className="min-h-screen flex flex-col px-4 pt-14 pb-10 max-w-lg mx-auto w-full">
+    <div className="min-h-screen flex flex-col px-4 pt-14 pb-24 max-w-lg mx-auto w-full">
       <div className="flex gap-1.5 mb-10">
         {STEP_ORDER.map((s, i) => (
           <div

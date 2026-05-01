@@ -1,0 +1,59 @@
+import { Redis } from "@upstash/redis";
+import { Receiver } from "@upstash/qstash";
+import webPush from "web-push";
+
+interface StoredSub {
+  subscription: PushSubscriptionJSON;
+}
+
+const redis = Redis.fromEnv();
+
+const receiver = new Receiver({
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY!,
+});
+
+export async function POST(request: Request): Promise<Response> {
+  webPush.setVapidDetails(
+    process.env.VAPID_SUBJECT!,
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+    process.env.VAPID_PRIVATE_KEY!,
+  );
+
+  const body = await request.text();
+
+  const signature = request.headers.get("upstash-signature") ?? "";
+  const isValid = await receiver.verify({ signature, body }).catch(() => false);
+  if (!isValid) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  const { deviceId }: { deviceId: string } = JSON.parse(body);
+  const stored = await redis.get<StoredSub>(`push:sub:${deviceId}`);
+  if (!stored?.subscription) {
+    return Response.json({ ok: true });
+  }
+
+  const { endpoint, keys, expirationTime } = stored.subscription;
+  if (!endpoint || !keys?.auth || !keys?.p256dh) {
+    return Response.json({ ok: true });
+  }
+
+  try {
+    await webPush.sendNotification(
+      {
+        endpoint,
+        keys: { auth: keys.auth, p256dh: keys.p256dh },
+        expirationTime: expirationTime ?? null,
+      },
+      JSON.stringify({ title: "93 HABITS", body: "Time to log your habits." }),
+    );
+  } catch (err: unknown) {
+    const status = (err as { statusCode?: number })?.statusCode;
+    if (status === 404 || status === 410) {
+      await redis.del(`push:sub:${deviceId}`);
+    }
+  }
+
+  return Response.json({ ok: true });
+}

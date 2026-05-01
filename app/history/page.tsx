@@ -52,7 +52,7 @@ export default function YearPage() {
   const handleClose = useCallback(() => setSelectedDate(null), []);
 
   return (
-    <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
+    <div className="px-4 pt-14 pb-24 max-w-lg mx-auto w-full">
       <header className="mb-6">
         <p className="font-body text-xs text-muted uppercase tracking-[3px]">
           History
