@@ -25,6 +25,13 @@ function getOrigin(request: Request): string {
   return `${proto}://${host}`;
 }
 
+export async function GET(request: Request): Promise<Response> {
+  const deviceId = new URL(request.url).searchParams.get("deviceId");
+  if (!deviceId) return Response.json({ active: false });
+  const stored = await redis.get<StoredSub>(`push:sub:${deviceId}`);
+  return Response.json({ active: !!stored?.scheduleId });
+}
+
 export async function POST(request: Request): Promise<Response> {
   const { subscription, cron, deviceId }: SubscribeBody = await request.json();
 

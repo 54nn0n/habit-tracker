@@ -59,7 +59,15 @@ export function usePushNotifications(): PushState & {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
     navigator.serviceWorker.ready.then(async (reg) => {
       const sub = await reg.pushManager.getSubscription();
-      setSubscribed(!!sub);
+      if (!sub) return;
+      // Verify the server also has this subscription — they can drift if the
+      // API call failed silently after the browser subscribed
+      const deviceId = getDeviceId();
+      const res = await fetch(
+        `/api/push/subscribe?deviceId=${encodeURIComponent(deviceId)}`,
+      ).catch(() => null);
+      const { active } = (await res?.json().catch(() => ({}))) ?? {};
+      setSubscribed(!!active);
     });
   }, []);
 
