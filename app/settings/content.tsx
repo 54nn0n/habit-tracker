@@ -16,6 +16,7 @@ import type { SyncStatus } from "@/lib/sync";
 import { encodeLogs, decodeLogs } from "@/lib/md-codec";
 import { getAllLogs, setAllLogs } from "@/lib/storage";
 import { resetOnboarding } from "@/lib/onboarding";
+import { getDeviceId } from "@/lib/push-device-id";
 import BackButton from "@/components/back-button";
 import Button from "@/components/button";
 
@@ -135,10 +136,33 @@ function SettingsInner() {
     [showToast],
   );
 
+  const aboutTapsRef = useRef(0);
+  const [devMode, setDevMode] = useState(false);
+  const [devToast, setDevToast] = useState<string | null>(null);
+
+  const handleAboutTap = useCallback(() => {
+    aboutTapsRef.current += 1;
+    if (aboutTapsRef.current >= 5) {
+      setDevMode((d) => !d);
+      aboutTapsRef.current = 0;
+    }
+  }, []);
+
+  const handleTestPush = useCallback(async () => {
+    const deviceId = getDeviceId();
+    const res = await fetch("/api/push/test", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deviceId }),
+    });
+    setDevToast(res.ok ? "Push sent." : "No subscription found.");
+    setTimeout(() => setDevToast(null), 3000);
+  }, []);
+
   const authError = searchParams.get("error");
 
   return (
-    <div className="px-4 pt-10 pb-20 max-w-lg mx-auto w-full">
+    <div className="px-4 pt-14 pb-24 max-w-lg mx-auto w-full">
       <header className="mb-8">
         <BackButton href="/" />
         <p className="font-body text-xs text-muted uppercase tracking-[3px]">
@@ -254,13 +278,35 @@ function SettingsInner() {
         </div>
       </section>
 
-      <section>
+      <section className={devMode ? "mb-8" : ""}>
         <p className={SECTION_LABEL}>{"// About"}</p>
-        <div className={`${PANEL} gap-1`}>
+        <button
+          type="button"
+          onClick={handleAboutTap}
+          className={`${PANEL} gap-1 w-full text-left`}
+        >
           <p className="font-display text-xs text-foreground">93 HABITS</p>
           <p className="font-body text-xs text-muted">v{VERSION}</p>
-        </div>
+        </button>
       </section>
+
+      {devMode && (
+        <section>
+          <p className={SECTION_LABEL}>{"// Dev Tools"}</p>
+          <div className={PANEL}>
+            <Button
+              variant="secondary"
+              onClick={handleTestPush}
+              className="w-full text-center"
+            >
+              SEND TEST PUSH
+            </Button>
+            {devToast && (
+              <p className="font-body text-xs text-muted">{devToast}</p>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

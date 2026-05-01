@@ -93,7 +93,7 @@ export default function EditHabitPage() {
     setForm((f) => f && { ...f, logType });
 
   return (
-    <div className="px-4 pt-10 pb-4 max-w-lg mx-auto w-full">
+    <div className="px-4 pt-14 pb-24 max-w-lg mx-auto w-full">
       <header className="mb-8">
         <BackButton href="/" />
         <h1 className="font-display mt-4 text-[22px] text-accent">
