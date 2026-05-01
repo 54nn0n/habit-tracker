@@ -79,6 +79,7 @@ export default function NotificationsSection() {
     subscribed,
     time,
     loading,
+    error,
     subscribe,
     unsubscribe,
     updateTime,
@@ -143,6 +144,7 @@ export default function NotificationsSection() {
             >
               ENABLE NOTIFICATIONS
             </Button>
+            {error && <p className="font-body text-xs text-red">{error}</p>}
           </>
         )}
       </div>
