@@ -10,6 +10,7 @@ interface PushState {
   subscribed: boolean;
   time: string;
   loading: boolean;
+  error: string | null;
 }
 
 const DEFAULT_TIME = "20:00";
@@ -52,6 +53,7 @@ export function usePushNotifications(): PushState & {
     return localStorage.getItem(STORED_TIME_KEY) ?? DEFAULT_TIME;
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
@@ -64,6 +66,7 @@ export function usePushNotifications(): PushState & {
   const subscribe = useCallback(async (notifTime: string) => {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
     setLoading(true);
+    setError(null);
     try {
       const perm = await Notification.requestPermission();
       setPermission(perm as NotificationPermission);
@@ -73,12 +76,18 @@ export function usePushNotifications(): PushState & {
       const existing = await reg.pushManager.getSubscription();
       if (existing) await existing.unsubscribe();
 
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-        ),
-      });
+      let sub: PushSubscription;
+      try {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(
+            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+          ),
+        });
+      } catch (e) {
+        setError(`Browser subscription failed: ${(e as Error).message}`);
+        return;
+      }
 
       const cron = localTimeToUtcCron(notifTime);
       const deviceId = getDeviceId();
@@ -88,7 +97,11 @@ export function usePushNotifications(): PushState & {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subscription: sub, cron, deviceId }),
       });
-      if (!res.ok) return;
+      if (!res.ok) {
+        const text = await res.text().catch(() => res.statusText);
+        setError(`Server error ${res.status}: ${text}`);
+        return;
+      }
 
       localStorage.setItem(STORED_TIME_KEY, notifTime);
       setTime(notifTime);
@@ -101,6 +114,7 @@ export function usePushNotifications(): PushState & {
   const unsubscribe = useCallback(async () => {
     if (!("serviceWorker" in navigator)) return;
     setLoading(true);
+    setError(null);
     try {
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.getSubscription();
@@ -123,6 +137,7 @@ export function usePushNotifications(): PushState & {
     async (newTime: string) => {
       if (!subscribed) return;
       setLoading(true);
+      setError(null);
       try {
         const reg = await navigator.serviceWorker.ready;
         const sub = await reg.pushManager.getSubscription();
@@ -152,6 +167,7 @@ export function usePushNotifications(): PushState & {
     subscribed,
     time,
     loading,
+    error,
     subscribe,
     unsubscribe,
     updateTime,
