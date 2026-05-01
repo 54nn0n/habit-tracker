@@ -54,8 +54,11 @@ export default function NotificationsSection() {
               <p className="font-body text-xs text-muted">Change time</p>
               <input
                 type="time"
-                value={time}
-                onChange={(e) => updateTime(e.target.value)}
+                value={pendingTime}
+                onChange={(e) => {
+                  setPendingTime(e.target.value);
+                  updateTime(e.target.value);
+                }}
                 disabled={loading}
                 className="font-body text-xs text-foreground bg-transparent border border-border px-2 py-1"
               />

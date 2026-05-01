@@ -13,13 +13,13 @@ const receiver = new Receiver({
   nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY!,
 });
 
-webPush.setVapidDetails(
-  process.env.VAPID_SUBJECT!,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!,
-);
-
 export async function POST(request: Request): Promise<Response> {
+  webPush.setVapidDetails(
+    process.env.VAPID_SUBJECT!,
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+    process.env.VAPID_PRIVATE_KEY!,
+  );
+
   const body = await request.text();
 
   const signature = request.headers.get("upstash-signature") ?? "";
@@ -39,14 +39,21 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ ok: true });
   }
 
-  await webPush.sendNotification(
-    {
-      endpoint,
-      keys: { auth: keys.auth, p256dh: keys.p256dh },
-      expirationTime: expirationTime ?? null,
-    },
-    JSON.stringify({ title: "93 HABITS", body: "Time to log your habits." }),
-  );
+  try {
+    await webPush.sendNotification(
+      {
+        endpoint,
+        keys: { auth: keys.auth, p256dh: keys.p256dh },
+        expirationTime: expirationTime ?? null,
+      },
+      JSON.stringify({ title: "93 HABITS", body: "Time to log your habits." }),
+    );
+  } catch (err: unknown) {
+    const status = (err as { statusCode?: number })?.statusCode;
+    if (status === 404 || status === 410) {
+      await redis.del(`push:sub:${deviceId}`);
+    }
+  }
 
   return Response.json({ ok: true });
 }

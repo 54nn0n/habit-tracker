@@ -12,6 +12,8 @@ export async function POST(request: Request): Promise<Response> {
   const { deviceId }: { deviceId: string } = await request.json();
 
   const existing = await redis.get<StoredSub>(`push:sub:${deviceId}`);
+
+  // Delete schedule first — if this fails, we can still retry later via Redis
   if (existing?.scheduleId) {
     await qstash.schedules.delete(existing.scheduleId).catch(() => null);
   }

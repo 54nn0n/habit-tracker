@@ -83,11 +83,12 @@ export function usePushNotifications(): PushState & {
       const cron = localTimeToUtcCron(notifTime);
       const deviceId = getDeviceId();
 
-      await fetch("/api/push/subscribe", {
+      const res = await fetch("/api/push/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ subscription: sub, cron, deviceId }),
       });
+      if (!res.ok) return;
 
       localStorage.setItem(STORED_TIME_KEY, notifTime);
       setTime(notifTime);
@@ -105,11 +106,12 @@ export function usePushNotifications(): PushState & {
       const sub = await reg.pushManager.getSubscription();
       if (sub) await sub.unsubscribe();
 
-      await fetch("/api/push/unsubscribe", {
+      const res = await fetch("/api/push/unsubscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deviceId: getDeviceId() }),
       });
+      if (!res.ok) return;
 
       setSubscribed(false);
     } finally {
@@ -129,11 +131,12 @@ export function usePushNotifications(): PushState & {
         const cron = localTimeToUtcCron(newTime);
         const deviceId = getDeviceId();
 
-        await fetch("/api/push/subscribe", {
+        const res = await fetch("/api/push/subscribe", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ subscription: sub, cron, deviceId }),
         });
+        if (!res.ok) return;
 
         localStorage.setItem(STORED_TIME_KEY, newTime);
         setTime(newTime);

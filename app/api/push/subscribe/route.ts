@@ -19,14 +19,11 @@ export async function POST(request: Request): Promise<Response> {
   const { subscription, cron, deviceId }: SubscribeBody = await request.json();
 
   const existing = await redis.get<StoredSub>(`push:sub:${deviceId}`);
-  if (existing?.scheduleId) {
-    await qstash.schedules.delete(existing.scheduleId).catch(() => null);
-  }
 
-  const host = request.headers.get("host")!;
-  const protocol = host.startsWith("localhost") ? "http" : "https";
-  const destination = `${protocol}://${host}/api/push/send`;
+  const origin = new URL(request.url).origin;
+  const destination = `${origin}/api/push/send`;
 
+  // Create new schedule before deleting old — avoids a gap if create fails
   const { scheduleId } = await qstash.schedules.create({
     destination,
     cron,
@@ -38,6 +35,10 @@ export async function POST(request: Request): Promise<Response> {
     subscription,
     scheduleId,
   });
+
+  if (existing?.scheduleId) {
+    await qstash.schedules.delete(existing.scheduleId).catch(() => null);
+  }
 
   return Response.json({ ok: true });
 }

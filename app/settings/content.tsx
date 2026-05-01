@@ -100,8 +100,15 @@ function SettingsInner() {
   );
 
   const aboutTapsRef = useRef(0);
+  const devToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [devMode, setDevMode] = useState(false);
   const [devToast, setDevToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (devToastTimer.current) clearTimeout(devToastTimer.current);
+    };
+  }, []);
 
   const handleAboutTap = useCallback(() => {
     aboutTapsRef.current += 1;
@@ -118,8 +125,9 @@ function SettingsInner() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ deviceId }),
     });
+    if (devToastTimer.current) clearTimeout(devToastTimer.current);
     setDevToast(res.ok ? "Push sent." : "No subscription found.");
-    setTimeout(() => setDevToast(null), 3000);
+    devToastTimer.current = setTimeout(() => setDevToast(null), 3000);
   }, []);
 
   const authError = searchParams.get("error");
