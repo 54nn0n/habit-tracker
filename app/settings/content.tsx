@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import type { ChangeEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import {
   isConnected,
   getEmail,
@@ -17,6 +18,11 @@ import { getAllLogs, setAllLogs } from "@/lib/storage";
 import { resetOnboarding } from "@/lib/onboarding";
 import BackButton from "@/components/back-button";
 import Button from "@/components/button";
+
+const NotificationsSection = dynamic(
+  () => import("@/components/notifications-section"),
+  { ssr: false },
+);
 
 const VERSION = "0.2.2";
 
@@ -43,6 +49,7 @@ const SECTION_LABEL =
   "font-display text-[8px] text-accent tracking-[2px] uppercase mb-2";
 const PANEL =
   "bg-surface border-2 border-border p-4 flex flex-col gap-3 shadow-px";
+
 
 function SettingsInner() {
   const router = useRouter();
@@ -231,6 +238,8 @@ function SettingsInner() {
           )}
         </div>
       </section>
+
+      <NotificationsSection />
 
       <section className="mb-8">
         <p className={SECTION_LABEL}>{"// Help"}</p>
