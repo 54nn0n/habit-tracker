@@ -57,7 +57,7 @@ export async function POST(request: Request): Promise<Response> {
           keys: { auth: keys.auth, p256dh: keys.p256dh },
           expirationTime: expirationTime ?? null,
         },
-        JSON.stringify({ title: "93 HABITS", body: "Test notification." }),
+        JSON.stringify({ title: "93 HABITS", body: "Don't break the streak! Log your habits for today." }),
       );
       console.log("WebPush result status:", result.statusCode);
     } catch (err: unknown) {

@@ -56,7 +56,7 @@ export async function POST(request: Request): Promise<Response> {
         keys: { auth: keys.auth, p256dh: keys.p256dh },
         expirationTime: expirationTime ?? null,
       },
-      JSON.stringify({ title: "93 HABITS", body: "Time to log your habits." }),
+      JSON.stringify({ title: "93 HABITS", body: "Don't break the streak! Log your habits for today." }),
     );
   } catch (err: unknown) {
     const status = (err as { statusCode?: number })?.statusCode;
