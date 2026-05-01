@@ -93,7 +93,9 @@ export function usePushNotifications(): PushState & {
           ),
         });
       } catch (e) {
-        setError(`Browser subscription failed: ${(e as Error).message}`);
+        setError(
+          `Could not set up notifications in this browser. Try reinstalling the app or using a different browser. (${(e as Error).message})`,
+        );
         return;
       }
 
@@ -106,8 +108,9 @@ export function usePushNotifications(): PushState & {
         body: JSON.stringify({ subscription: sub, cron, deviceId }),
       });
       if (!res.ok) {
-        const text = await res.text().catch(() => res.statusText);
-        setError(`Server error ${res.status}: ${text}`);
+        setError(
+          "Could not save your notification schedule. Please try again.",
+        );
         return;
       }
 
