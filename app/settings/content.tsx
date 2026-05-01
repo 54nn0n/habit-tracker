@@ -18,7 +18,7 @@ import { resetOnboarding } from "@/lib/onboarding";
 import BackButton from "@/components/back-button";
 import Button from "@/components/button";
 
-const VERSION = "0.2.2";
+const VERSION = "0.2.3";
 
 const STATUS_LABEL: Record<SyncStatus, string> = {
   idle: "NOT SYNCED YET",
