@@ -14,13 +14,23 @@ const receiver = new Receiver({
 });
 
 export async function POST(request: Request): Promise<Response> {
-  webPush.setVapidDetails(
-    process.env.VAPID_SUBJECT!,
-    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!,
-  );
+  try {
+    const subject = process.env.VAPID_SUBJECT;
+    const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    const privateKey = process.env.VAPID_PRIVATE_KEY;
 
-  const body = await request.text();
+    if (!subject || !publicKey || !privateKey) {
+      console.error("Missing VAPID environment variables");
+      return Response.json({ error: "Server configuration error" }, { status: 500 });
+    }
+
+    const cleanSubject = subject.trim().replace(/^["']|["']$/g, "");
+    const cleanPublicKey = publicKey.trim().replace(/^["']|["']$/g, "");
+    const cleanPrivateKey = privateKey.trim().replace(/^["']|["']$/g, "");
+
+    webPush.setVapidDetails(cleanSubject, cleanPublicKey, cleanPrivateKey);
+
+    const body = await request.text();
 
   const signature = request.headers.get("upstash-signature") ?? "";
   const isValid = await receiver.verify({ signature, body }).catch(() => false);
@@ -56,4 +66,11 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   return Response.json({ ok: true });
+  } catch (error) {
+    console.error("Error in push send POST:", error);
+    return Response.json(
+      { error: error instanceof Error ? error.message : "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }

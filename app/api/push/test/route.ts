@@ -22,7 +22,11 @@ export async function POST(request: Request): Promise<Response> {
       return Response.json({ error: "Server configuration error" }, { status: 500 });
     }
 
-    webPush.setVapidDetails(subject, publicKey, privateKey);
+    const cleanSubject = subject.trim().replace(/^["']|["']$/g, "");
+    const cleanPublicKey = publicKey.trim().replace(/^["']|["']$/g, "");
+    const cleanPrivateKey = privateKey.trim().replace(/^["']|["']$/g, "");
+
+    webPush.setVapidDetails(cleanSubject, cleanPublicKey, cleanPrivateKey);
 
     const body = await request.json();
     const { deviceId }: { deviceId: string } = body;
