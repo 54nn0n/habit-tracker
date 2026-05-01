@@ -24,7 +24,7 @@ const NotificationsSection = dynamic(
   { ssr: false },
 );
 
-const VERSION = "0.2.2";
+const VERSION = "0.2.3";
 
 const STATUS_LABEL: Record<SyncStatus, string> = {
   idle: "NOT SYNCED YET",
